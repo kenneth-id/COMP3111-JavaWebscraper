@@ -71,7 +71,7 @@ public class Controller {
     	textAreaConsole.setText(output);
     	
     	// addition
-    	labelCount.setText("BORKBORK");
+    	labelCount.setText("Hi");
     	
     }
     
