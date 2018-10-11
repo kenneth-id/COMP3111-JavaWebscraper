@@ -66,7 +66,7 @@ public class Controller {
     	List<Item> result = scraper.scrape(textFieldKeyword.getText());
     	String output = "";
     	for (Item item : result) {
-    		output += item.getTitle() + "\t" + item.getPrice() + "\t" + item.getUrl() + "\n";
+    		output += item.getTitle() + "\t" + item.getPrice() +	 "\t" + item.getUrl() + "\n";
     	}
     	textAreaConsole.setText(output);
     	
