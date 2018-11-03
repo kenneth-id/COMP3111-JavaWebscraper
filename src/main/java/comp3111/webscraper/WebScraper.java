@@ -66,7 +66,8 @@ import java.util.Vector;
  */
 public class WebScraper {
 
-	private static final String DEFAULT_URL = "https://newyork.craigslist.org/";
+	private static final String CRAIGLIST_DEFAULT_URL = "https://newyork.craigslist.org/";
+	private static final String EBAY_DEFAULT_URL = "https://www.ebay.com/";
 	private WebClient client;
 
 	/**
@@ -87,16 +88,24 @@ public class WebScraper {
 	public List<Item> scrape(String keyword) {
 
 		try {
-			String searchUrl = DEFAULT_URL + "search/sss?sort=rel&query=" + URLEncoder.encode(keyword, "UTF-8");
-			HtmlPage page = client.getPage(searchUrl);
-
+			String searchCraiglistUrl = CRAIGLIST_DEFAULT_URL + "search/sss?sort=rel&query=" + URLEncoder.encode(keyword, "UTF-8");
+			String searchEbayUrl = EBAY_DEFAULT_URL + "/sch/i.html?_from=R40&_trksid=m570.l1313&_nkw=" + URLEncoder.encode(keyword, "UTF-8")+ "&_sacat=0";
 			
-			List<?> items = (List<?>) page.getByXPath("//li[@class='result-row']");
+			HtmlPage craiglistPage = client.getPage(searchCraiglistUrl);
+			HtmlPage ebayPage = client.getPage(searchEbayUrl);
+			
+			System.out.println("debug " + ebayPage.toString());
+			List<?> craiglistItems = (List<?>) craiglistPage.getByXPath("//li[@class='result-row']");
+			System.out.println("size of craiglistItems list= " + craiglistItems.size());
+			//List<?> ebayItems = (List<?>) ebayPage.getByXPath("//li[@class='s-item  ']");
+			List<?> ebayItems = (List<?>) ebayPage.getByXPath("//li[@class='s-item  ']");
 			
 			Vector<Item> result = new Vector<Item>();
-
-			for (int i = 0; i < items.size(); i++) {
-				HtmlElement htmlItem = (HtmlElement) items.get(i);
+			
+			//this loop is for craiglist items
+			for (int i = 0; i < craiglistItems.size(); i++) {
+				//System.out.println(i);
+				HtmlElement htmlItem = (HtmlElement) craiglistItems.get(i);
 				HtmlAnchor itemAnchor = ((HtmlAnchor) htmlItem.getFirstByXPath(".//p[@class='result-info']/a"));
 				HtmlElement spanPrice = ((HtmlElement) htmlItem.getFirstByXPath(".//a/span[@class='result-price']"));
 
@@ -106,9 +115,30 @@ public class WebScraper {
 
 				Item item = new Item();
 				item.setTitle(itemAnchor.asText());
-				item.setUrl(DEFAULT_URL + itemAnchor.getHrefAttribute());
+				item.setUrl(CRAIGLIST_DEFAULT_URL + itemAnchor.getHrefAttribute());
 
 				item.setPrice(new Double(itemPrice.replace("$", "")));
+
+				result.add(item);
+			}
+			
+			//this loop for ebay items
+			System.out.println("size of ebayItems list= " + ebayItems.size());
+			for (int i = 0; i < ebayItems.size(); i++) {
+				//System.out.println(i);
+				HtmlElement htmlItem = (HtmlElement) ebayItems.get(i);
+				HtmlAnchor itemAnchor = ((HtmlAnchor) htmlItem.getFirstByXPath(".//a[@class='s-item__link']"));
+				HtmlElement spanPrice = ((HtmlElement) htmlItem.getFirstByXPath(".//span[@class='s-item__price']"));
+
+				// It is possible that an item doesn't have any price, we set the price to 0.0
+				// in this case
+				String itemPrice = spanPrice == null ? "0.0" : spanPrice.asText();
+
+				Item item = new Item();
+				item.setTitle(itemAnchor.asText());
+				item.setUrl(EBAY_DEFAULT_URL + itemAnchor.getHrefAttribute());
+				itemPrice=itemPrice.replace(",", ""); //for commas in item price
+				item.setPrice(new Double(itemPrice.replace("HKD", "")));
 
 				result.add(item);
 			}

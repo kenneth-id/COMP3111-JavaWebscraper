@@ -64,7 +64,7 @@ public class Controller {
     private void actionSearch() {
     	System.out.println("actionSearch: " + textFieldKeyword.getText());
     	List<Item> result = scraper.scrape(textFieldKeyword.getText());
-    	String output = "";
+    	String output = "Items scraped from craiglist and ebay \n ";
     	for (Item item : result) {
     		output += item.getTitle() + "\t" + item.getPrice() +	 "\t" + item.getUrl() + "\n";
     	}
