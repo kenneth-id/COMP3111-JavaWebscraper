@@ -1,14 +1,19 @@
 package comp3111.webscraper;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.net.URLEncoder;
 import java.util.List;
-
+import java.util.Collections;
 import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.WebResponse;
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.gargoylesoftware.htmlunit.BrowserVersion;
 import java.util.Vector;
-
+//TODO: sorting
+//TODO: how to handle a range of item price
 
 /**
  * WebScraper provide a sample code that scrape web content. After it is constructed, you can call the method scrape with a keyword, 
@@ -68,6 +73,8 @@ public class WebScraper {
 
 	private static final String CRAIGLIST_DEFAULT_URL = "https://newyork.craigslist.org/";
 	private static final String EBAY_DEFAULT_URL = "https://www.ebay.com/";
+	private static final String SHOPEE_DEFAULT_URL = "https://shopee.sg/";
+	private static final String CAROUSELL_DEFAULT_URL = "https://hk.carousell.com/";
 	private WebClient client;
 
 	/**
@@ -77,6 +84,10 @@ public class WebScraper {
 		client = new WebClient();
 		client.getOptions().setCssEnabled(false);
 		client.getOptions().setJavaScriptEnabled(false);
+//		System.out.println(client.getBrowserVersion().getApplicationName());
+		
+		
+		
 	}
 
 	/**
@@ -88,23 +99,20 @@ public class WebScraper {
 	public List<Item> scrape(String keyword) {
 
 		try {
+			
 			String searchCraiglistUrl = CRAIGLIST_DEFAULT_URL + "search/sss?sort=rel&query=" + URLEncoder.encode(keyword, "UTF-8");
-			String searchEbayUrl = EBAY_DEFAULT_URL + "/sch/i.html?_from=R40&_trksid=m570.l1313&_nkw=" + URLEncoder.encode(keyword, "UTF-8")+ "&_sacat=0";
-			
 			HtmlPage craiglistPage = client.getPage(searchCraiglistUrl);
-			HtmlPage ebayPage = client.getPage(searchEbayUrl);
+			client.waitForBackgroundJavaScriptStartingBefore(50000);
+
+
 			
-			System.out.println("debug " + ebayPage.toString());
 			List<?> craiglistItems = (List<?>) craiglistPage.getByXPath("//li[@class='result-row']");
-			System.out.println("size of craiglistItems list= " + craiglistItems.size());
-			//List<?> ebayItems = (List<?>) ebayPage.getByXPath("//li[@class='s-item  ']");
-			List<?> ebayItems = (List<?>) ebayPage.getByXPath("//li[@class='s-item  ']");
+			System.out.println("size of craiglistItems list= " + craiglistItems.size());		
 			
 			Vector<Item> result = new Vector<Item>();
 			
 			//this loop is for craiglist items
 			for (int i = 0; i < craiglistItems.size(); i++) {
-				//System.out.println(i);
 				HtmlElement htmlItem = (HtmlElement) craiglistItems.get(i);
 				HtmlAnchor itemAnchor = ((HtmlAnchor) htmlItem.getFirstByXPath(".//p[@class='result-info']/a"));
 				HtmlElement spanPrice = ((HtmlElement) htmlItem.getFirstByXPath(".//a/span[@class='result-price']"));
@@ -118,31 +126,173 @@ public class WebScraper {
 				item.setUrl(CRAIGLIST_DEFAULT_URL + itemAnchor.getHrefAttribute());
 
 				item.setPrice(new Double(itemPrice.replace("$", "")));
+				item.setOrigin("Craiglist");
 
 				result.add(item);
 			}
 			
-			//this loop for ebay items
-			System.out.println("size of ebayItems list= " + ebayItems.size());
-			for (int i = 0; i < ebayItems.size(); i++) {
-				//System.out.println(i);
-				HtmlElement htmlItem = (HtmlElement) ebayItems.get(i);
-				HtmlAnchor itemAnchor = ((HtmlAnchor) htmlItem.getFirstByXPath(".//a[@class='s-item__link']"));
-				HtmlElement spanPrice = ((HtmlElement) htmlItem.getFirstByXPath(".//span[@class='s-item__price']"));
-
-				// It is possible that an item doesn't have any price, we set the price to 0.0
-				// in this case
-				String itemPrice = spanPrice == null ? "0.0" : spanPrice.asText();
-
+//			String searchEbayUrl = EBAY_DEFAULT_URL + "/sch/i.html?_from=R40&_trksid=m570.l1313&_nkw=" + URLEncoder.encode(keyword, "UTF-8")+ "&_sacat=0";
+//			HtmlPage ebayPage = client.getPage(searchEbayUrl);
+//			client.waitForBackgroundJavaScriptStartingBefore(50000);
+//			
+//			//debug block for different page versions
+//			WebResponse response = ebayPage.getWebResponse();
+//			String content = response.getContentAsString();
+//			File debug= new File("/home/kenneth/git/shoe_debug.html");
+//			debug.createNewFile();
+//			
+//			if(!debug.exists()) { 
+//		                debug.createNewFile();
+//		            }
+//		    FileWriter fw = new FileWriter(debug);
+//		    fw.write(content);
+//		    fw.close();		    
+//		    
+//		    
+//			List<?> ebayItems = (List<?>) ebayPage.getByXPath("//li[@class='s-item  ']");
+//			//this loop for ebay items
+//			//for other page version
+//			if(ebayItems.size()==0) {
+//				System.out.println("entered the other page version");
+//				ebayItems=(List<?>) ebayPage.getByXPath("//li[@class='sresult lvresult clearfix li shic' or @class='sresult lvresult clearfix li']");
+//				System.out.println("size of ebayItems list= " + ebayItems.size());
+//				for (int i = 0; i < ebayItems.size(); i++) {
+//					System.out.println(i);
+//					HtmlElement htmlItem = (HtmlElement) ebayItems.get(i);
+//					HtmlAnchor itemAnchor = ((HtmlAnchor) htmlItem.getFirstByXPath(".//a[@class='vip']"));
+//					HtmlElement spanPrice = ((HtmlElement) htmlItem.getFirstByXPath(".//span[@class='bold']"));
+//					
+//					Item item = new Item();
+//					item.setTitle(itemAnchor.asText());
+//					System.out.println(itemAnchor.asText());
+//					
+//					item.setUrl(EBAY_DEFAULT_URL + itemAnchor.getHrefAttribute());
+//					String itemPrice = spanPrice == null ? "0.0" : spanPrice.asText();
+//					
+//					
+//					
+//					itemPrice=itemPrice.replace(",", ""); //for commas in item price
+//					itemPrice=itemPrice.replace("HKD", "");
+//					itemPrice=itemPrice.replace("$", "");
+//					Double finalPrice= new Double(itemPrice);
+//					finalPrice= finalPrice/7.8; //converting HKD to USD
+//					
+//					item.setPrice(finalPrice);
+//					System.out.println(finalPrice);
+//					item.setOrigin("Ebay");
+//					result.add(item);
+//				}
+//			}
+//			
+//			
+//			else {
+//				System.out.println("size of ebayItems list= " + ebayItems.size());
+//				for (int i = 0; i < ebayItems.size(); i++) {
+//					HtmlElement htmlItem = (HtmlElement) ebayItems.get(i);
+//					HtmlAnchor itemAnchor = ((HtmlAnchor) htmlItem.getFirstByXPath(".//a[@class='s-item__link']"));
+//					HtmlElement spanPrice = ((HtmlElement) htmlItem.getFirstByXPath(".//span[@class='s-item__price']"));
+//					
+//					Item item = new Item();
+//					item.setTitle(itemAnchor.asText());
+//					item.setUrl(EBAY_DEFAULT_URL + itemAnchor.getHrefAttribute());
+//					String itemPrice = spanPrice == null ? "0.0" : spanPrice.asText();
+//					itemPrice=itemPrice.replace(",", ""); //for commas in item price
+//					itemPrice=itemPrice.replace("HKD", "");
+//					itemPrice=itemPrice.replace("$", "");
+//					Double finalPrice= new Double(itemPrice);
+//					finalPrice= finalPrice/7.8; //converting HKD to USD
+//					
+//					
+//					item.setPrice(finalPrice);
+//					item.setOrigin("Ebay");
+//					result.add(item);
+//				}
+//			}
+			
+//			String searchShopeeUrl = SHOPEE_DEFAULT_URL + "search-item/?__classic__=1&search=" + URLEncoder.encode(keyword, "UTF-8")+"&by=pop";
+//			System.out.println(searchShopeeUrl);
+//			HtmlPage shopeePage = client.getPage(searchShopeeUrl);
+//			client.waitForBackgroundJavaScriptStartingBefore(50000);
+//			
+//			WebResponse response = shopeePage.getWebResponse();
+//			String content = response.getContentAsString();
+//			File debug= new File("/home/kenneth/git/shopee_debug.html");
+//			debug.createNewFile();
+//			
+//			if(!debug.exists()) { 
+//		                debug.createNewFile();
+//		            }
+//		    FileWriter fw = new FileWriter(debug);
+//		    fw.write(content);
+//		    fw.close();		    
+//		    
+//			List<?> shopeeItems = (List<?>) shopeePage.getByXPath("//li[@class='item-card simple ']");
+//			System.out.println("size of shopeeItems list= " + shopeeItems.size());
+//			for (int i = 0; i < shopeeItems.size(); i++) {
+//				HtmlElement htmlItem = (HtmlElement) shopeeItems.get(i);
+//				HtmlAnchor itemAnchor = ((HtmlAnchor) htmlItem.getFirstByXPath(".//a[@class='item-href normal']"));
+//				HtmlElement spanPrice = ((HtmlElement) htmlItem.getFirstByXPath(".//span[@class='todel-dollarfy_ext_int fix-size']"));
+//				
+//				Item item = new Item();
+//				item.setTitle(itemAnchor.asText());
+//				item.setUrl(SHOPEE_DEFAULT_URL + itemAnchor.getHrefAttribute());
+//				String itemPrice = spanPrice == null ? "0.0" : spanPrice.asText();
+//				itemPrice=itemPrice.replace(",", ""); //for commas in item price
+//				itemPrice=itemPrice.replace("$", "");
+//				Double finalPrice= new Double(itemPrice);
+//				finalPrice= finalPrice/1.37; //converting SGD to USD
+//				
+//				
+//				item.setPrice(finalPrice);
+//				item.setOrigin("Shopee");
+//				System.out.println(itemAnchor.asText() + "\t" + SHOPEE_DEFAULT_URL + itemAnchor.getHrefAttribute()+"\t"+ finalPrice);
+//				result.add(item);
+//			}
+			
+			String searchCarousellUrl = CAROUSELL_DEFAULT_URL + "search/products/?query=" + URLEncoder.encode(keyword, "UTF-8");
+			System.out.println(searchCarousellUrl);
+			HtmlPage carousellPage = client.getPage(searchCarousellUrl);
+			client.waitForBackgroundJavaScriptStartingBefore(50000);
+			
+			WebResponse response = carousellPage.getWebResponse();
+			String content = response.getContentAsString();
+			File debug= new File("/home/kenneth/git/carousell_debug.html");
+			debug.createNewFile();
+			
+			if(!debug.exists()) { 
+		                debug.createNewFile();
+		            }
+		    FileWriter fw = new FileWriter(debug);
+		    fw.write(content);
+		    fw.close();		    
+		    
+			List<?> carousellItems = (List<?>) carousellPage.getByXPath("//div[@class='A-X']");
+			System.out.println("size of carousellItems list= " + carousellItems.size());
+			for (int i = 0; i < carousellItems.size(); i++) {
+				HtmlElement htmlItem = (HtmlElement) carousellItems.get(i);
+				HtmlAnchor itemAnchor = ((HtmlAnchor) htmlItem.getFirstByXPath(".//a[@class='A-Y']"));
+				HtmlElement spanPrice = ((HtmlElement) htmlItem.getFirstByXPath("./figure/div/figcaption/a/div[2]/div[1]"));
+				HtmlElement itemTitle = ((HtmlElement) htmlItem.getFirstByXPath("./figure/div/figcaption/a/div[1]/div"));
+				
 				Item item = new Item();
-				item.setTitle(itemAnchor.asText());
-				item.setUrl(EBAY_DEFAULT_URL + itemAnchor.getHrefAttribute());
+				item.setTitle(itemTitle.asText());
+				item.setUrl(CAROUSELL_DEFAULT_URL + itemAnchor.getHrefAttribute());
+				String itemPrice = spanPrice == null ? "0.0" : spanPrice.asText();
 				itemPrice=itemPrice.replace(",", ""); //for commas in item price
-				item.setPrice(new Double(itemPrice.replace("HKD", "")));
-
+				itemPrice=itemPrice.replace("HK$", "");
+				Double finalPrice= new Double(itemPrice);
+				finalPrice= finalPrice/7.8; //converting HKD to USD
+				
+				
+				item.setPrice(finalPrice);
+				item.setOrigin("Carousell");
+//				System.out.println(itemAnchor.asText() + "\t" + SHOPEE_DEFAULT_URL + itemAnchor.getHrefAttribute()+"\t"+ finalPrice);
 				result.add(item);
 			}
+			
 			client.close();
+			//sorting by price and item origin
+			Collections.sort(result,Item.COMPARE_BY_Price);
 			return result;
 		} catch (Exception e) {
 			System.out.println(e);
