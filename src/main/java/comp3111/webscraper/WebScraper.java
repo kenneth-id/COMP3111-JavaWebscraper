@@ -72,8 +72,6 @@ import java.util.Vector;
 public class WebScraper {
 
 	private static final String CRAIGLIST_DEFAULT_URL = "https://newyork.craigslist.org/";
-	private static final String EBAY_DEFAULT_URL = "https://www.ebay.com/";
-	private static final String SHOPEE_DEFAULT_URL = "https://shopee.sg/";
 	private static final String CAROUSELL_DEFAULT_URL = "https://hk.carousell.com/";
 	private WebClient client;
 
@@ -84,10 +82,7 @@ public class WebScraper {
 		client = new WebClient();
 		client.getOptions().setCssEnabled(false);
 		client.getOptions().setJavaScriptEnabled(false);
-//		System.out.println(client.getBrowserVersion().getApplicationName());
-		
-		
-		
+//		System.out.println(client.getBrowserVersion().getApplicationName()); print to get browser version		
 	}
 
 	/**
@@ -131,123 +126,6 @@ public class WebScraper {
 				result.add(item);
 			}
 			
-//			String searchEbayUrl = EBAY_DEFAULT_URL + "/sch/i.html?_from=R40&_trksid=m570.l1313&_nkw=" + URLEncoder.encode(keyword, "UTF-8")+ "&_sacat=0";
-//			HtmlPage ebayPage = client.getPage(searchEbayUrl);
-//			client.waitForBackgroundJavaScriptStartingBefore(50000);
-//			
-//			//debug block for different page versions
-//			WebResponse response = ebayPage.getWebResponse();
-//			String content = response.getContentAsString();
-//			File debug= new File("/home/kenneth/git/shoe_debug.html");
-//			debug.createNewFile();
-//			
-//			if(!debug.exists()) { 
-//		                debug.createNewFile();
-//		            }
-//		    FileWriter fw = new FileWriter(debug);
-//		    fw.write(content);
-//		    fw.close();		    
-//		    
-//		    
-//			List<?> ebayItems = (List<?>) ebayPage.getByXPath("//li[@class='s-item  ']");
-//			//this loop for ebay items
-//			//for other page version
-//			if(ebayItems.size()==0) {
-//				System.out.println("entered the other page version");
-//				ebayItems=(List<?>) ebayPage.getByXPath("//li[@class='sresult lvresult clearfix li shic' or @class='sresult lvresult clearfix li']");
-//				System.out.println("size of ebayItems list= " + ebayItems.size());
-//				for (int i = 0; i < ebayItems.size(); i++) {
-//					System.out.println(i);
-//					HtmlElement htmlItem = (HtmlElement) ebayItems.get(i);
-//					HtmlAnchor itemAnchor = ((HtmlAnchor) htmlItem.getFirstByXPath(".//a[@class='vip']"));
-//					HtmlElement spanPrice = ((HtmlElement) htmlItem.getFirstByXPath(".//span[@class='bold']"));
-//					
-//					Item item = new Item();
-//					item.setTitle(itemAnchor.asText());
-//					System.out.println(itemAnchor.asText());
-//					
-//					item.setUrl(EBAY_DEFAULT_URL + itemAnchor.getHrefAttribute());
-//					String itemPrice = spanPrice == null ? "0.0" : spanPrice.asText();
-//					
-//					
-//					
-//					itemPrice=itemPrice.replace(",", ""); //for commas in item price
-//					itemPrice=itemPrice.replace("HKD", "");
-//					itemPrice=itemPrice.replace("$", "");
-//					Double finalPrice= new Double(itemPrice);
-//					finalPrice= finalPrice/7.8; //converting HKD to USD
-//					
-//					item.setPrice(finalPrice);
-//					System.out.println(finalPrice);
-//					item.setOrigin("Ebay");
-//					result.add(item);
-//				}
-//			}
-//			
-//			
-//			else {
-//				System.out.println("size of ebayItems list= " + ebayItems.size());
-//				for (int i = 0; i < ebayItems.size(); i++) {
-//					HtmlElement htmlItem = (HtmlElement) ebayItems.get(i);
-//					HtmlAnchor itemAnchor = ((HtmlAnchor) htmlItem.getFirstByXPath(".//a[@class='s-item__link']"));
-//					HtmlElement spanPrice = ((HtmlElement) htmlItem.getFirstByXPath(".//span[@class='s-item__price']"));
-//					
-//					Item item = new Item();
-//					item.setTitle(itemAnchor.asText());
-//					item.setUrl(EBAY_DEFAULT_URL + itemAnchor.getHrefAttribute());
-//					String itemPrice = spanPrice == null ? "0.0" : spanPrice.asText();
-//					itemPrice=itemPrice.replace(",", ""); //for commas in item price
-//					itemPrice=itemPrice.replace("HKD", "");
-//					itemPrice=itemPrice.replace("$", "");
-//					Double finalPrice= new Double(itemPrice);
-//					finalPrice= finalPrice/7.8; //converting HKD to USD
-//					
-//					
-//					item.setPrice(finalPrice);
-//					item.setOrigin("Ebay");
-//					result.add(item);
-//				}
-//			}
-			
-//			String searchShopeeUrl = SHOPEE_DEFAULT_URL + "search-item/?__classic__=1&search=" + URLEncoder.encode(keyword, "UTF-8")+"&by=pop";
-//			System.out.println(searchShopeeUrl);
-//			HtmlPage shopeePage = client.getPage(searchShopeeUrl);
-//			client.waitForBackgroundJavaScriptStartingBefore(50000);
-//			
-//			WebResponse response = shopeePage.getWebResponse();
-//			String content = response.getContentAsString();
-//			File debug= new File("/home/kenneth/git/shopee_debug.html");
-//			debug.createNewFile();
-//			
-//			if(!debug.exists()) { 
-//		                debug.createNewFile();
-//		            }
-//		    FileWriter fw = new FileWriter(debug);
-//		    fw.write(content);
-//		    fw.close();		    
-//		    
-//			List<?> shopeeItems = (List<?>) shopeePage.getByXPath("//li[@class='item-card simple ']");
-//			System.out.println("size of shopeeItems list= " + shopeeItems.size());
-//			for (int i = 0; i < shopeeItems.size(); i++) {
-//				HtmlElement htmlItem = (HtmlElement) shopeeItems.get(i);
-//				HtmlAnchor itemAnchor = ((HtmlAnchor) htmlItem.getFirstByXPath(".//a[@class='item-href normal']"));
-//				HtmlElement spanPrice = ((HtmlElement) htmlItem.getFirstByXPath(".//span[@class='todel-dollarfy_ext_int fix-size']"));
-//				
-//				Item item = new Item();
-//				item.setTitle(itemAnchor.asText());
-//				item.setUrl(SHOPEE_DEFAULT_URL + itemAnchor.getHrefAttribute());
-//				String itemPrice = spanPrice == null ? "0.0" : spanPrice.asText();
-//				itemPrice=itemPrice.replace(",", ""); //for commas in item price
-//				itemPrice=itemPrice.replace("$", "");
-//				Double finalPrice= new Double(itemPrice);
-//				finalPrice= finalPrice/1.37; //converting SGD to USD
-//				
-//				
-//				item.setPrice(finalPrice);
-//				item.setOrigin("Shopee");
-//				System.out.println(itemAnchor.asText() + "\t" + SHOPEE_DEFAULT_URL + itemAnchor.getHrefAttribute()+"\t"+ finalPrice);
-//				result.add(item);
-//			}
 			
 			String searchCarousellUrl = CAROUSELL_DEFAULT_URL + "search/products/?query=" + URLEncoder.encode(keyword, "UTF-8");
 			System.out.println(searchCarousellUrl);
@@ -266,13 +144,13 @@ public class WebScraper {
 		    fw.write(content);
 		    fw.close();		    
 		    
-			List<?> carousellItems = (List<?>) carousellPage.getByXPath("//div[@class='A-X']");
+			List<?> carousellItems = (List<?>) carousellPage.getByXPath("//*[@id=\"root\"]/div/div[1]/div[1]/div[2]/div[2]/div[4]/div[1]/div");
 			System.out.println("size of carousellItems list= " + carousellItems.size());
 			for (int i = 0; i < carousellItems.size(); i++) {
 				HtmlElement htmlItem = (HtmlElement) carousellItems.get(i);
-				HtmlAnchor itemAnchor = ((HtmlAnchor) htmlItem.getFirstByXPath(".//a[@class='A-Y']"));
-				HtmlElement spanPrice = ((HtmlElement) htmlItem.getFirstByXPath("./figure/div/figcaption/a/div[2]/div[1]"));
-				HtmlElement itemTitle = ((HtmlElement) htmlItem.getFirstByXPath("./figure/div/figcaption/a/div[1]/div"));
+				HtmlAnchor itemAnchor = ((HtmlAnchor) htmlItem.getFirstByXPath("./div/figure/div/figcaption/a"));
+				HtmlElement spanPrice = ((HtmlElement) htmlItem.getFirstByXPath("./div//figure/div/figcaption/a/div[2]/div[1]"));
+				HtmlElement itemTitle = ((HtmlElement) htmlItem.getFirstByXPath("./div//figure/div/figcaption/a/div[1]/div"));
 				
 				Item item = new Item();
 				item.setTitle(itemTitle.asText());
@@ -286,7 +164,7 @@ public class WebScraper {
 				
 				item.setPrice(finalPrice);
 				item.setOrigin("Carousell");
-//				System.out.println(itemAnchor.asText() + "\t" + SHOPEE_DEFAULT_URL + itemAnchor.getHrefAttribute()+"\t"+ finalPrice);
+//				System.out.println(itemAnchor.asText() + "\t" + SHOPEE_DEFAULT_URL + itemAnchor.getHrefAttribute()+"\t"+ finalPrice); //print to get item URL and price
 				result.add(item);
 			}
 			

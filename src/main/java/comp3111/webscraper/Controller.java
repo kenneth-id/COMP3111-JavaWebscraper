@@ -42,6 +42,8 @@ public class Controller {
     
     private WebScraper scraper;
     
+    private List<Item> result;
+    
     /**
      * Default controller
      */
@@ -63,7 +65,7 @@ public class Controller {
     @FXML
     private void actionSearch() {
     	System.out.println("actionSearch: " + textFieldKeyword.getText());
-    	List<Item> result = scraper.scrape(textFieldKeyword.getText());
+    	result = scraper.scrape(textFieldKeyword.getText());
     	String output = "Items scraped from craiglist and carousell \n ";
     	for (Item item : result) {
     		output += item.getTitle() + "\t" + item.getPrice() +	 "\t" + item.getOrigin() +	 "\t" +item.getUrl() + "\n";

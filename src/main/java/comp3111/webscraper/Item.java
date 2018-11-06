@@ -1,4 +1,5 @@
 package comp3111.webscraper;
+import java.time.LocalDateTime;
 import java.util.Comparator;
 
 
@@ -7,6 +8,7 @@ public class Item  {
 	private Double price ;
 	private String url ;
 	private String origin;
+	private LocalDateTime postedDate;
 	
 	public String getTitle() {
 		return title;
@@ -33,6 +35,15 @@ public class Item  {
 		this.origin=origin;
 	}
 	
+	public LocalDateTime getPostedDate() {
+		return postedDate;
+	}
+	
+	public void setPostedDate(LocalDateTime postedDate) {
+		this.postedDate= postedDate;
+	}
+	
+	
 	
 	public static Comparator<Item> COMPARE_BY_Price = new Comparator<Item>() {
         public int compare(Item one, Item other) {
@@ -45,6 +56,4 @@ public class Item  {
             return other.origin.compareTo(one.origin);
         }
     };
-	
-
 }
