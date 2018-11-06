@@ -104,10 +104,40 @@ public class WebScraper {
 				HtmlAnchor itemAnchor = ((HtmlAnchor) htmlItem.getFirstByXPath("./div/figure/div/figcaption/a"));
 				HtmlElement spanPrice = ((HtmlElement) htmlItem.getFirstByXPath("./div//figure/div/figcaption/a/div[2]/div[1]"));
 				HtmlElement itemTitle = ((HtmlElement) htmlItem.getFirstByXPath("./div//figure/div/figcaption/a/div[1]/div"));
+				HtmlElement itemPostedOffset = ((HtmlElement) htmlItem.getFirstByXPath("./div/figure/div/a/div[2]/time/span"));
 				
 				Item item = new Item();
-				
-				
+				String offsetString= itemPostedOffset.asText();
+				LocalDateTime currentDateTime= LocalDateTime.now();
+				LocalDateTime finalPostedDate=currentDateTime;
+				if(offsetString.contains("yesterday")) {
+					finalPostedDate= currentDateTime.minusDays(1);
+				}
+				else if(offsetString.contains("New Carouseller")) {
+					finalPostedDate=currentDateTime;
+				}
+				else if(offsetString.contains("last year")) {
+					finalPostedDate= currentDateTime.minusYears(1);
+				}
+				else {
+					String stringDigits= offsetString.replaceAll("\\D+","");
+					int offsetAmount=0;
+					
+					if(!stringDigits.isEmpty()) {
+						offsetAmount= Integer.parseInt(stringDigits);
+					}
+//					System.out.println(offsetAmount);
+					
+					if(offsetString.contains("hours")) {
+						finalPostedDate= currentDateTime.minusHours(offsetAmount);
+					}
+					else if(offsetString.contains("days")) {
+						finalPostedDate= currentDateTime.minusDays(offsetAmount);
+					}
+					else if(offsetString.contains("months")) {
+						finalPostedDate= currentDateTime.minusMonths(offsetAmount);
+					}
+				}
 				
 				String itemPrice = spanPrice == null ? "0.0" : spanPrice.asText();
 				itemPrice=itemPrice.replace(",", ""); //for commas in item price
@@ -119,6 +149,8 @@ public class WebScraper {
 				item.setUrl(CAROUSELL_DEFAULT_URL + itemAnchor.getHrefAttribute());
 				item.setPrice(finalPrice);
 				item.setOrigin("Carousell");
+				item.setPostedDate(finalPostedDate);
+//				System.out.println(finalPostedDate.toString());
 //				System.out.println(itemAnchor.asText() + "\t" + SHOPEE_DEFAULT_URL + itemAnchor.getHrefAttribute()+"\t"+ finalPrice); //print to get item URL and price
 				result.add(item);
 			}

@@ -69,6 +69,7 @@ public class Controller {
     	String output = "Items scraped from craiglist and carousell \n ";
     	for (Item item : result) {
     		output += item.getTitle() + "\t" + item.getPrice() +	 "\t" + item.getOrigin() +	 "\t" +item.getUrl() + "\n";
+//    		System.out.println(item.getPostedDate().toString());
     	}
     	textAreaConsole.setText(output);
     	
