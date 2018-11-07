@@ -47,7 +47,14 @@ public class Item  {
 	
 	public static Comparator<Item> COMPARE_BY_Price = new Comparator<Item>() {
         public int compare(Item one, Item other) {
-            return one.price.compareTo(other.price);
+            int value1 =one.price.compareTo(other.price);
+            if(value1==0) {
+            	int value2 = other.origin.compareTo(one.origin);
+            	return value2;
+            }
+            else {
+            return value1;
+            }
         }
     };
     

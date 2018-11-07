@@ -154,7 +154,6 @@ public class WebScraper {
 //				System.out.println(itemAnchor.asText() + "\t" + SHOPEE_DEFAULT_URL + itemAnchor.getHrefAttribute()+"\t"+ finalPrice); //print to get item URL and price
 				result.add(item);
 			}
-			
 			client.close();
 			//sorting by price and item origin
 			Collections.sort(result,Item.COMPARE_BY_Price);
