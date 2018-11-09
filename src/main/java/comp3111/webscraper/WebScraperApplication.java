@@ -11,6 +11,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.Scene;
 
 
+
 /**
  * @author kevinw
  * 
@@ -59,7 +60,7 @@ public class WebScraperApplication extends Application {
 	}
 
 	/**
-	 * Entry point of the program. No argument should be supplied
+	 * Entry point of the program. No argument should 	be supplied
 	 * @param args - not used.
 	 */
 	public static void main(String args[]) {
