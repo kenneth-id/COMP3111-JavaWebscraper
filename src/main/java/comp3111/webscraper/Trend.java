@@ -1,33 +1,49 @@
 package comp3111.webscraper;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Trend {
 	private ArrayList<ArrayList<Item>> itemLists; //  6 5 4 3 2 1 0 day before
 	private ArrayList<Double> averagePricesList; 
-
+	private ArrayList<String> datesString;
+	private static final DateTimeFormatter displayFormatter = DateTimeFormatter.ofPattern("MM/dd/yyyy ");
+	
 	public Trend() {
 	itemLists = new ArrayList<ArrayList<Item>>();
 	averagePricesList = new ArrayList<Double>();
+	datesString= new ArrayList<String>();
+	}
+	//TODO:Bug here, dont use it yet
+	public void initializeTrend(List<Item> result) {
+		setItemLists(result);
+		computeAveragePricesList();
+		setDatesString();
 	}
 	
-	public Double getAveragePriceForList(ArrayList<Item> list) {
-		Double total =0.0;
-		int divisor = 0;
-		Double zero = 0.0;
-		for(int i=0; i< list.size();i++) {
-			Double itemPrice =list.get(i).getPrice();
-			if(!(itemPrice.equals(zero))) {
-				total += itemPrice;
-				divisor++;
-			}
-		}
-		Double average = (Double) total/divisor;
-		return average;
+	public void setDatesString() {
+		String zeroDaysBeforeDate= LocalDate.now().format(displayFormatter);
+		String oneDaysBeforeDate= LocalDate.now().minusDays(1).format(displayFormatter);
+		String twoDaysBeforeDate= LocalDate.now().minusDays(2).format(displayFormatter);
+		String threeDaysBeforeDate= LocalDate.now().minusDays(3).format(displayFormatter);
+		String fourDaysBeforeDate= LocalDate.now().minusDays(4).format(displayFormatter);
+		String fiveDaysBeforeDate= LocalDate.now().minusDays(5).format(displayFormatter);
+		String sixDaysBeforeDate= LocalDate.now().minusDays(6).format(displayFormatter);
+		
+		datesString.add(sixDaysBeforeDate);
+		datesString.add(fiveDaysBeforeDate);
+		datesString.add(fourDaysBeforeDate);
+		datesString.add(threeDaysBeforeDate);
+		datesString.add(twoDaysBeforeDate);
+		datesString.add(oneDaysBeforeDate);
+		datesString.add(zeroDaysBeforeDate);
 	}
 	
+	public ArrayList <String> getDatesString() {
+		return datesString;
+	}
 	public void computeAveragePricesList() { //6 5 4 3 2 1 0
 		Double zeroDaysBeforeAverage = 0.0;
 		Double oneDaysBeforeAverage = 0.0;
@@ -60,6 +76,26 @@ public class Trend {
 		averagePricesList.add(twoDaysBeforeAverage);
 		averagePricesList.add(oneDaysBeforeAverage);
 		averagePricesList.add(zeroDaysBeforeAverage);
+	}
+	
+	public Double getAveragePriceForList(ArrayList<Item> list) {
+		Double total =0.0;
+		int divisor = 0;
+		Double zero = 0.0;
+		for(int i=0; i< list.size();i++) {
+			Double itemPrice =list.get(i).getPrice();
+			if(!(itemPrice.equals(zero))) {
+				total += itemPrice;
+				divisor++;
+			}
+		}
+		if(divisor!= 0) {
+		Double average = (Double) total/divisor;
+		return average;
+		}
+		else {
+			return 0.0;
+		}
 	}
 	
 	public ArrayList<Double> getAveragePricesList(){
