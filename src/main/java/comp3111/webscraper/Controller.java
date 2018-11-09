@@ -5,6 +5,7 @@ package comp3111.webscraper;
 
 import javafx.fxml.FXML;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseButton;
@@ -30,16 +31,20 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.Button;
 
+import java.awt.Desktop;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.Iterator;
 import java.util.List;
 //import com.google.common.collect.EvictingQueue;
 
-//import java.awt.Button;
+import java.awt.*;
 import javafx.application.HostServices;
 
 
-import javax.security.auth.callback.Callback;
-
+import javafx.util.Callback;
 import javafx.collections.ObservableList;
 import javafx.collections.FXCollections;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -99,7 +104,7 @@ public class Controller {
     private TableColumn price;
 
     @FXML
-    private TableColumn url;
+    private TableColumn<Item, String> url;
 
     @FXML
     private TableColumn postedDate;
@@ -278,19 +283,48 @@ public class Controller {
     	}
     }
     
+
+	private static class HyperlinkCell implements  Callback<TableColumn<Item, String>, TableCell<Item, String>> {
+	    @Override
+	    public TableCell<Item, String> call(TableColumn<Item, String> arg) {
+	        TableCell<Item, String> cell = new TableCell<Item, String>() {
+	            @Override
+	            protected void updateItem(String item, boolean empty) {
+	            	Hyperlink item_casted = new Hyperlink(item);
+	                setGraphic(item_casted);
+	                item_casted.setOnAction(new EventHandler<ActionEvent>() {
+						@Override
+						public void handle(ActionEvent arg0) {
+							try {
+								Desktop.getDesktop().browse(new URI(item));
+							} catch(IOException e1) {
+								e1.printStackTrace();
+							} catch(URISyntaxException e1) {
+								e1.printStackTrace();
+							}
+						}
+	                	
+	                });
+	            }
+	        };
+	        return cell;
+	    }
+	}
+    
     /** Task 4: Fill out table
      * Called when the table tab is clicked
      * **/
     @FXML
     private void tableTab() {
     	tableControl.setEditable(false);
-    	//List<Item> result = scraper.scrape(textFieldKeyword.getText());
     	
     	ObservableList<Item> data = FXCollections.observableArrayList(result);
     	
     	title.setCellValueFactory(new PropertyValueFactory<Item,String>("title"));
     	price.setCellValueFactory(new PropertyValueFactory<Item,Double>("price"));
+    	
     	url.setCellValueFactory(new PropertyValueFactory<Item,String>("url"));
+    	url.setCellFactory(new HyperlinkCell());
     	
     	tableControl.setItems(data);
     	tableControl.getColumns().setAll(title,price,url);
