@@ -3,8 +3,8 @@
  */
 package comp3111.webscraper;
 
-
 import javafx.fxml.FXML;
+import javafx.event.ActionEvent;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseButton;
@@ -25,8 +25,27 @@ import javafx.event.EventHandler;
 import javafx.collections.FXCollections;
 
 import java.util.ArrayList;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TableCell;
+import javafx.scene.control.Button;
+
+import java.util.Iterator;
 import java.util.List;
 //import com.google.common.collect.EvictingQueue;
+
+//import java.awt.Button;
+import javafx.application.HostServices;
+
+
+import javax.security.auth.callback.Callback;
+
+import javafx.collections.ObservableList;
+import javafx.collections.FXCollections;
+import javafx.scene.control.cell.PropertyValueFactory;
+
+
+
 
 
 /**
@@ -71,6 +90,33 @@ public class Controller {
     
     private ArrayList<List<Item>> lastFiveResults;
     
+    private TableView<Item> tableControl;
+
+    @FXML
+    private TableColumn title;
+
+    @FXML
+    private TableColumn price;
+
+    @FXML
+    private TableColumn url;
+
+    @FXML
+    private TableColumn postedDate;
+    
+    @FXML
+    private Button refineID;
+
+    @FXML
+    private Button goID;
+    
+    @FXML
+    private TextField textFieldKeywordRefine;
+    
+    private String beforeRefine; // to store keyword before refining
+    
+    
+    
     /**
      * Default controller
      */
@@ -88,6 +134,7 @@ public class Controller {
     	
     }
     
+    
     /**
      * Called when the search button is pressed.
      */
@@ -104,7 +151,6 @@ public class Controller {
 	    	addToLastFiveSearches(searchKeyWord);
 	    	addToLastFiveResults(result);
     	}
-    	
     	updateTrendChart(result,searchKeyWord);
     	
     	String output = "Items scraped from craiglist and carousell (Currency in USD) \n ";
@@ -159,6 +205,49 @@ public class Controller {
     		         }
     		    });
     	}
+    	beforeRefine = textFieldKeyword.getText();
+    	
+    	tableTab();
+    	refineID.setDisable(false);
+    }
+    
+
+    @FXML
+    private void mouseClicked() {
+    	if(textAreaConsole.getText().isEmpty()) {
+    		refineID.setDisable(true);
+    		return;
+    	}
+    }
+    @FXML
+    private void refineSearch() {
+    	//System.out.println("actionSearch: " + textFieldKeyword.getText());
+    	
+    	//if(textFieldKeyword.getText().isEmpty() && textFieldKeywordRefine.getText().isEmpty()) 
+    	if(textAreaConsole.getText().isEmpty()) {
+    		refineID.setDisable(true);
+    		return;
+    	}
+
+    	if(refineID.isDisabled()==false) {
+//	    	List<Item> result = scraper.scrape(beforeRefine + " " + textFieldKeywordRefine.getText());
+    		result = scraper.scrape(beforeRefine);
+    		
+    		for (Iterator<Item> iter = result.listIterator(); iter.hasNext(); ) {
+    		    Item item = iter.next();
+    		    if (!item.getTitle().contains(textFieldKeywordRefine.getText())) {
+    		        iter.remove();
+    		    }
+    		}
+    		String output = "";
+	    	for (Item item : result) {
+    		output += item.getTitle() + "\t" + item.getPrice() + "\t" + item.getUrl() + "\n";
+	    	}	
+	    	textAreaConsole.setText(output);
+	    	tableTab();
+    	}
+    	
+    	refineID.setDisable(true);
     }
     
     /**
@@ -189,5 +278,23 @@ public class Controller {
     	}
     }
     
+    /** Task 4: Fill out table
+     * Called when the table tab is clicked
+     * **/
+    @FXML
+    private void tableTab() {
+    	tableControl.setEditable(false);
+    	//List<Item> result = scraper.scrape(textFieldKeyword.getText());
+    	
+    	ObservableList<Item> data = FXCollections.observableArrayList(result);
+    	
+    	title.setCellValueFactory(new PropertyValueFactory<Item,String>("title"));
+    	price.setCellValueFactory(new PropertyValueFactory<Item,Double>("price"));
+    	url.setCellValueFactory(new PropertyValueFactory<Item,String>("url"));
+    	
+    	tableControl.setItems(data);
+    	tableControl.getColumns().setAll(title,price,url);
+    
+    }
 }
 
