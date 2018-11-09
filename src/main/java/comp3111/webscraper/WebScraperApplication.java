@@ -10,6 +10,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.VBox;
 import javafx.scene.Scene;
 
+import javafx.application.HostServices;
+import comp3111.webscraper.Controller;
 
 
 /**
@@ -55,8 +57,6 @@ public class WebScraperApplication extends Application {
    		stage.setScene(scene);
    		stage.setTitle("WebScrapper");
    		stage.show();
-    		
-
 	}
 
 	/**
