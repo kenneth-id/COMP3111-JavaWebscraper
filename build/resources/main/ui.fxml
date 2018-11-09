@@ -134,13 +134,13 @@
                                 <content>
                                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                        <children>
-                                          <ComboBox fx:id="comboBoxTrend" layoutX="273.0" layoutY="14.0" prefWidth="150.0" promptText="Search Record" visibleRowCount="5" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0" />
+                                          <ComboBox fx:id="comboBoxTrend" layoutX="273.0" layoutY="14.0" onAction="#trendComboBoxAction" prefWidth="150.0" promptText="Search Record" visibleRowCount="5" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0" />
                                           <AreaChart fx:id="areaChartTrend" layoutX="-41.0" layoutY="-62.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="30.0">
                                             <xAxis>
-                                              <CategoryAxis side="BOTTOM" />
+                                              <CategoryAxis label="Date" side="BOTTOM" />
                                             </xAxis>
                                             <yAxis>
-                                              <NumberAxis side="LEFT" />
+                                              <NumberAxis label="Average Price (USD)" side="LEFT" />
                                             </yAxis>
                                           </AreaChart>
                                        </children>

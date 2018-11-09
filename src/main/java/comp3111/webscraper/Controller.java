@@ -18,6 +18,7 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Data;
 import javafx.scene.chart.XYChart.Series;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.collections.FXCollections;
 
 import java.util.ArrayList;
@@ -74,7 +75,6 @@ public class Controller {
     	scraper = new WebScraper();
     	lastFiveSearches = FXCollections.observableArrayList();
     	lastFiveResults= new ArrayList<List<Item>>();
-    	
     }
 
     /**
@@ -93,19 +93,42 @@ public class Controller {
     	String searchKeyWord =textFieldKeyword.getText();
     	System.out.println("actionSearch: " + searchKeyWord);
     	
-    	addToLastFiveSearches(searchKeyWord);
+    	
     	comboBoxTrend.setItems(lastFiveSearches);
     	result = scraper.scrape(searchKeyWord);
-    	addToLastFiveResults(result);
     	
+    	if(!lastFiveSearches.contains(searchKeyWord)) {
+	    	addToLastFiveSearches(searchKeyWord);
+	    	addToLastFiveResults(result);
+    	}
+    	
+    	updateTrendChart(result,searchKeyWord);
+    	
+    	String output = "Items scraped from craiglist and carousell (Currency in USD) \n ";
+    	for (Item item : result) {
+    		output += item.getTitle() + "\t" + item.getPrice() +	 "\t" + item.getOrigin() +	 "\t" +item.getUrl() + "\n";
+//    		System.out.println(item.getPostedDate().toString());
+    	}
+    	textAreaConsole.setText(output); 	
+    }
+    
+    @FXML
+    void trendComboBoxAction(ActionEvent event) {
+    	String comboString = comboBoxTrend.getValue();
+    	int index = lastFiveSearches.indexOf(comboString);
+    	List<Item> comboResult = lastFiveResults.get(index);
+    	updateTrendChart(comboResult,comboString);
+    	comboBoxTrend.setValue("Search Record");
+    }
+    
+    private void updateTrendChart(List<Item> result, String searchKeyWord) {
+    	//remove previous linechart
+    	areaChartTrend.getData().clear();
     	Trend searchTrend = new Trend();
     	searchTrend.initializeTrend(result);
- 
-    	
-    	
     	XYChart.Series<String, Number> averagePricesSeries = new XYChart.Series<String, Number>();
     	averagePricesSeries.setName("The average selling price of the " + searchKeyWord);
-
+    	
     	for(int i=0; i<7;i++) {
 //    		if(!(searchTrend.getAveragePricesList().get(i).equals(0.0))) {
     			averagePricesSeries.getData().add(new Data<String, Number>(searchTrend.getDatesString().get(i), searchTrend.getAveragePricesList().get(i)));
@@ -116,15 +139,6 @@ public class Controller {
 //    		}
     	}
     	areaChartTrend.getData().addAll(averagePricesSeries);
-    	
-    	String output = "Items scraped from craiglist and carousell (Currency in USD) \n ";
-    	for (Item item : result) {
-    		output += item.getTitle() + "\t" + item.getPrice() +	 "\t" + item.getOrigin() +	 "\t" +item.getUrl() + "\n";
-//    		System.out.println(item.getPostedDate().toString());
-    	}
-    	textAreaConsole.setText(output);
-    	
-    	
     }
     
     /**
@@ -136,7 +150,7 @@ public class Controller {
     }
     
     private void addToLastFiveSearches (String toAdd) {
-    	if(lastFiveSearches.size()<5) {
+    	if(lastFiveSearches.size()<5 ) {
     		lastFiveSearches.add(toAdd);
     	}
     	else {
