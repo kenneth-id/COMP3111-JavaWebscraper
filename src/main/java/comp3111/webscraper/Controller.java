@@ -7,6 +7,8 @@ package comp3111.webscraper;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.ComboBox;
@@ -19,6 +21,7 @@ import javafx.scene.chart.XYChart.Data;
 import javafx.scene.chart.XYChart.Series;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.collections.FXCollections;
 
 import java.util.ArrayList;
@@ -131,14 +134,29 @@ public class Controller {
     	
     	for(int i=0; i<7;i++) {
 //    		if(!(searchTrend.getAveragePricesList().get(i).equals(0.0))) {
-    			averagePricesSeries.getData().add(new Data<String, Number>(searchTrend.getDatesString().get(i), searchTrend.getAveragePricesList().get(i)));
+    		Data<String,Number> point =new Data<String, Number>(searchTrend.getDatesString().get(i), 
+    				searchTrend.getAveragePricesList().get(i));
+    		averagePricesSeries.getData().add(point); 		
 //    		}
 //    		else {
-//    		averagePricesSeries.getData().add(new Data<String, Number>(searchTrend.getDatesString().get(i), null));
-//        		
+//    		averagePricesSeries.getData().add(ne	w Data<String, Number>(searchTrend.getDatesString().get(i), null));  		
 //    		}
     	}
     	areaChartTrend.getData().addAll(averagePricesSeries);
+    	//adding double click event handler to each point
+    	//TODO: fix bug with combobox
+    	for(int i=0; i<7;i++) {
+    		System.out.println(i);
+    		areaChartTrend.getData().get(0).getData().get(i).getNode().addEventHandler(MouseEvent.MOUSE_PRESSED,
+        		    new EventHandler<MouseEvent>() {
+    		        @Override 
+    		        public void handle(MouseEvent mouseEvent) {
+    		                 if(mouseEvent.isPrimaryButtonDown() && mouseEvent.getClickCount() == 2){
+    		                     System.out.println("Double clicked");
+    		                 }
+    		         }
+    		    });
+    	}
     }
     
     /**
@@ -147,7 +165,7 @@ public class Controller {
     @FXML
     private void actionNew() {
     	System.out.println("actionNew");
-    }
+    }    
     
     private void addToLastFiveSearches (String toAdd) {
     	if(lastFiveSearches.size()<5 ) {
