@@ -105,9 +105,9 @@ public class Controller {
     	result = scraper.scrape(searchKeyWord);
     	Trend searchTrend = new Trend (result);
     	if(!lastFiveSearches.contains(searchKeyWord)) {
-	    	addToLastFiveSearches(searchKeyWord);
 	    	addToLastFiveResults(result);
 	    	addToLastFiveTrends(searchTrend);
+	    	addToLastFiveSearches(searchKeyWord);
     	}
     	
     	updateTrendChart(searchTrend,searchKeyWord);
@@ -123,9 +123,9 @@ public class Controller {
     @FXML
     void trendComboBoxAction(ActionEvent event) {
     	String comboString = comboBoxTrend.getValue();
-//    	System.out.println(comboString);
+    	System.out.println(comboString);
     	int index = lastFiveSearches.indexOf(comboString);
-//    	System.out.println(index);
+    	System.out.println(index);
     	Trend comboTrend = lastFiveTrends.get(index);
     	updateTrendChart(comboTrend,comboString);
     }
@@ -136,23 +136,24 @@ public class Controller {
     	searchTrend.initializeTrend(result);
     	XYChart.Series<String, Number> averagePricesSeries = new XYChart.Series<String, Number>();
     	averagePricesSeries.setName("The average selling price of the " + searchKeyWord);
-    	
+    	int numberOfPoints=0;
     	//TODO: index properly, not hardcode
     	for(int i=0; i<7;i++) {
-//    		if(!(searchTrend.getAveragePricesList().get(i).equals(0.0))) {
-//    		System.out.println("Index in adding points"+i);
+    		if(!(searchTrend.getAveragePricesList().get(i).equals(0.0))) {
     		Data<String,Number> point =new Data<String, Number>(searchTrend.getDatesString().get(i), 
     				searchTrend.getAveragePricesList().get(i));
-    		averagePricesSeries.getData().add(point); 		
-//    		}
+    		averagePricesSeries.getData().add(point);
+    		numberOfPoints++;
+    		}
 //    		else {
 //    		averagePricesSeries.getData().add(ne	w Data<String, Number>(searchTrend.getDatesString().get(i), null));  		
 //    		}
     	}
     	areaChartTrend.getData().addAll(averagePricesSeries);
+    	final int numberOfPointsFinal = numberOfPoints;
     	//adding double click event handler to each point
     	//TODO: index properly, not hardcode
-    	for(int i=0; i<7;i++) {
+    	for(int i=0; i<numberOfPointsFinal;i++) {
 //    		System.out.println("Index in adding listeners"+i);
     		Data<String, Number> currentDataPoint =areaChartTrend.getData().get(0).getData().get(i);
     		Node currentNode =  currentDataPoint.getNode();
@@ -163,7 +164,7 @@ public class Controller {
     		                 if(mouseEvent.isPrimaryButtonDown() && mouseEvent.getClickCount() == 2){
     		                	 
     		                	 ArrayList<Node> bluePoints = new ArrayList<Node>();
-    		                	 for(int i=0 ; i<7 ;i++) {
+    		                	 for(int i=0 ; i<numberOfPointsFinal ;i++) {
     		                		 
     		                		 Node currentNode =  areaChartTrend.getData().get(0).getData().get(i).getNode();
     		                		 if((currentNode.getStyle() == "-fx-background-color: blue;")){
@@ -203,30 +204,36 @@ public class Controller {
     private void addToLastFiveSearches (String toAdd) {
     	if(lastFiveSearches.size()<5 ) {
     		lastFiveSearches.add(toAdd);
+    		System.out.println("added search");
     	}
     	else {
     		lastFiveSearches.remove(0);
     		lastFiveSearches.add(toAdd);
+    		System.out.println("removed oldest and added search");
     	}
     }
     
     private void addToLastFiveResults (List<Item> toAdd ) {
     	if(lastFiveSearches.size()<5) {
     		lastFiveResults.add(toAdd);
+    		System.out.println("added results");
     	}
     	else {
     		lastFiveResults.remove(0);
     		lastFiveResults.add(toAdd);
+    		System.out.println("removed oldest and added results");
     	}
     }
     
     private void addToLastFiveTrends (Trend toAdd ) {
     	if(lastFiveSearches.size()<5) {
     		lastFiveTrends.add(toAdd);
+    		System.out.println("added trend");
     	}
     	else {
     		lastFiveTrends.remove(0);
     		lastFiveTrends.add(toAdd);
+    		System.out.println("removed oldest and added trend");
     	}
     }
     
