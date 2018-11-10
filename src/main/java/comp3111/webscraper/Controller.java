@@ -118,10 +118,11 @@ public class Controller {
     @FXML
     void trendComboBoxAction(ActionEvent event) {
     	String comboString = comboBoxTrend.getValue();
+//    	System.out.println(comboString);
     	int index = lastFiveSearches.indexOf(comboString);
+//    	System.out.println(index);
     	List<Item> comboResult = lastFiveResults.get(index);
     	updateTrendChart(comboResult,comboString);
-    	comboBoxTrend.setValue("Search Record");
     }
     
     private void updateTrendChart(List<Item> result, String searchKeyWord) {
@@ -134,6 +135,7 @@ public class Controller {
     	
     	for(int i=0; i<7;i++) {
 //    		if(!(searchTrend.getAveragePricesList().get(i).equals(0.0))) {
+//    		System.out.println("Index in adding points"+i);
     		Data<String,Number> point =new Data<String, Number>(searchTrend.getDatesString().get(i), 
     				searchTrend.getAveragePricesList().get(i));
     		averagePricesSeries.getData().add(point); 		
@@ -146,7 +148,7 @@ public class Controller {
     	//adding double click event handler to each point
     	//TODO: fix bug with combobox
     	for(int i=0; i<7;i++) {
-    		System.out.println(i);
+//    		System.out.println("Index in adding listeners"+i);
     		areaChartTrend.getData().get(0).getData().get(i).getNode().addEventHandler(MouseEvent.MOUSE_PRESSED,
         		    new EventHandler<MouseEvent>() {
     		        @Override 
