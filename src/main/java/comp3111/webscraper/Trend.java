@@ -16,11 +16,34 @@ public class Trend {
 	averagePricesList = new ArrayList<Double>();
 	datesString= new ArrayList<String>();
 	}
+	
+	public Trend(List<Item> result) {
+		itemLists = new ArrayList<ArrayList<Item>>();
+		averagePricesList = new ArrayList<Double>();
+		datesString= new ArrayList<String>();
+		setItemLists(result);
+		computeAveragePricesList();
+		setDatesString();
+	}
+	
 	//TODO:Bug here, dont use it yet
 	public void initializeTrend(List<Item> result) {
 		setItemLists(result);
 		computeAveragePricesList();
 		setDatesString();
+	}
+	
+	public int getDateIndex(String date) {
+		for(int i=0; i<datesString.size() ; i++) {
+			if(datesString.get(i).equals(date)) {
+			return i;
+			}
+		}
+		return -1;
+	}
+	
+	public ArrayList<Item> getItemList(int index) {
+		return itemLists.get(index);
 	}
 	
 	public void setDatesString() {

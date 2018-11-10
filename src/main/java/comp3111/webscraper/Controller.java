@@ -12,6 +12,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.ComboBox;
+import javafx.scene.Node;
 import javafx.scene.chart.AreaChart;
 import javafx.scene.chart.Axis;
 import javafx.scene.chart.CategoryAxis;
@@ -71,6 +72,8 @@ public class Controller {
     
     private ArrayList<List<Item>> lastFiveResults;
     
+    private ArrayList<Trend> lastFiveTrends;
+    
     /**
      * Default controller
      */
@@ -78,6 +81,7 @@ public class Controller {
     	scraper = new WebScraper();
     	lastFiveSearches = FXCollections.observableArrayList();
     	lastFiveResults= new ArrayList<List<Item>>();
+    	lastFiveTrends = new ArrayList<Trend>();
     }
 
     /**
@@ -99,18 +103,19 @@ public class Controller {
     	
     	comboBoxTrend.setItems(lastFiveSearches);
     	result = scraper.scrape(searchKeyWord);
-    	
+    	Trend searchTrend = new Trend (result);
     	if(!lastFiveSearches.contains(searchKeyWord)) {
 	    	addToLastFiveSearches(searchKeyWord);
 	    	addToLastFiveResults(result);
+	    	addToLastFiveTrends(searchTrend);
     	}
     	
-    	updateTrendChart(result,searchKeyWord);
+    	updateTrendChart(searchTrend,searchKeyWord);
     	
     	String output = "Items scraped from craiglist and carousell (Currency in USD) \n ";
     	for (Item item : result) {
-    		output += item.getTitle() + "\t" + item.getPrice() +	 "\t" + item.getOrigin() +	 "\t" +item.getUrl() + "\n";
-//    		System.out.println(item.getPostedDate().toString());
+    		output += item.getTitle() + "\t" + item.getPrice() +	 "\t" 
+    	+ item.getOrigin() +	 "\t" +item.getUrl() + "\n";
     	}
     	textAreaConsole.setText(output); 	
     }
@@ -121,18 +126,18 @@ public class Controller {
 //    	System.out.println(comboString);
     	int index = lastFiveSearches.indexOf(comboString);
 //    	System.out.println(index);
-    	List<Item> comboResult = lastFiveResults.get(index);
-    	updateTrendChart(comboResult,comboString);
+    	Trend comboTrend = lastFiveTrends.get(index);
+    	updateTrendChart(comboTrend,comboString);
     }
     
-    private void updateTrendChart(List<Item> result, String searchKeyWord) {
+    private void updateTrendChart(Trend searchTrend, String searchKeyWord) {
     	//remove previous linechart
     	areaChartTrend.getData().clear();
-    	Trend searchTrend = new Trend();
     	searchTrend.initializeTrend(result);
     	XYChart.Series<String, Number> averagePricesSeries = new XYChart.Series<String, Number>();
     	averagePricesSeries.setName("The average selling price of the " + searchKeyWord);
     	
+    	//TODO: index properly, not hardcode
     	for(int i=0; i<7;i++) {
 //    		if(!(searchTrend.getAveragePricesList().get(i).equals(0.0))) {
 //    		System.out.println("Index in adding points"+i);
@@ -146,15 +151,33 @@ public class Controller {
     	}
     	areaChartTrend.getData().addAll(averagePricesSeries);
     	//adding double click event handler to each point
-    	//TODO: fix bug with combobox
+    	//TODO: index properly, not hardcode
     	for(int i=0; i<7;i++) {
 //    		System.out.println("Index in adding listeners"+i);
-    		areaChartTrend.getData().get(0).getData().get(i).getNode().addEventHandler(MouseEvent.MOUSE_PRESSED,
+    		Data<String, Number> currentDataPoint =areaChartTrend.getData().get(0).getData().get(i);
+    		Node currentNode =  currentDataPoint.getNode();
+    		currentNode.addEventHandler(MouseEvent.MOUSE_PRESSED,
         		    new EventHandler<MouseEvent>() {
     		        @Override 
     		        public void handle(MouseEvent mouseEvent) {
     		                 if(mouseEvent.isPrimaryButtonDown() && mouseEvent.getClickCount() == 2){
-    		                     System.out.println("Double clicked");
+    		                	 
+    		                	 ArrayList<Node> bluePoints = new ArrayList<Node>();
+    		                	 for(int i=0 ; i<7 ;i++) {
+    		                		 
+    		                		 Node currentNode =  areaChartTrend.getData().get(0).getData().get(i).getNode();
+    		                		 if((currentNode.getStyle() == "-fx-background-color: blue;")){
+    		                			 bluePoints.add(currentNode);
+        		                     }
+    		                	 }
+    		                	 for(Node bluePoint : bluePoints) {
+    		                		 bluePoint.setStyle("");
+    		                	 }
+    		                	 if(!currentNode.getStyle().equals("-fx-background-color: blue;") ) {
+    		                     currentNode.setStyle("-fx-background-color: blue;");
+    		                     int dateIndex = searchTrend.getDateIndex(currentDataPoint.getXValue());
+    		                     updateConsole(searchTrend.getItemList(dateIndex));
+    		                	 }
     		                 }
     		         }
     		    });
@@ -169,6 +192,14 @@ public class Controller {
     	System.out.println("actionNew");
     }    
     
+    private void updateConsole(List<Item> result) {
+    	String output = "Items posted on that date \n ";
+    	for (Item item : result) {
+    		output += item.getTitle() + "\t" + item.getPrice() +	 "\t" 
+    				+ item.getOrigin() +	 "\t" +item.getUrl() + "\n";
+    	}
+    	textAreaConsole.setText(output); 
+    }
     private void addToLastFiveSearches (String toAdd) {
     	if(lastFiveSearches.size()<5 ) {
     		lastFiveSearches.add(toAdd);
@@ -186,6 +217,16 @@ public class Controller {
     	else {
     		lastFiveResults.remove(0);
     		lastFiveResults.add(toAdd);
+    	}
+    }
+    
+    private void addToLastFiveTrends (Trend toAdd ) {
+    	if(lastFiveSearches.size()<5) {
+    		lastFiveTrends.add(toAdd);
+    	}
+    	else {
+    		lastFiveTrends.remove(0);
+    		lastFiveTrends.add(toAdd);
     	}
     }
     

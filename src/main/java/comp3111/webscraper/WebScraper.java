@@ -48,10 +48,7 @@ public class WebScraper {
 			
 			String searchCraiglistUrl = CRAIGLIST_DEFAULT_URL + "search/sss?sort=rel&query=" + URLEncoder.encode(keyword, "UTF-8");
 			HtmlPage craiglistPage = client.getPage(searchCraiglistUrl);
-			client.waitForBackgroundJavaScriptStartingBefore(50000);
-
-
-			
+			client.waitForBackgroundJavaScriptStartingBefore(50000);			
 			List<?> craiglistItems = (List<?>) craiglistPage.getByXPath("//li[@class='result-row']");
 			System.out.println("size of craiglistItems list= " + craiglistItems.size());		
 			
