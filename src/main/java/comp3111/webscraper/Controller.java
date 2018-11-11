@@ -102,7 +102,9 @@ public class Controller {
     	
     	
     	comboBoxTrend.setItems(lastFiveSearches);
+    	System.out.println("Begin scraping");
     	result = scraper.scrape(searchKeyWord);
+    	System.out.println("Finished scraping");
     	Trend searchTrend = new Trend (result);
     	if(!lastFiveSearches.contains(searchKeyWord)) {
 	    	addToLastFiveResults(result);

@@ -103,6 +103,10 @@ public class WebScraper {
 				HtmlElement itemTitle = ((HtmlElement) htmlItem.getFirstByXPath("./div//figure/div/figcaption/a/div[1]/div"));
 				HtmlElement itemPostedOffset = ((HtmlElement) htmlItem.getFirstByXPath("./div/figure/div/a/div[2]/time/span"));
 				
+				if(itemAnchor == null || spanPrice== null || itemTitle== null || itemPostedOffset == null) {
+					continue;
+				}
+				
 				Item item = new Item();
 				String offsetString= itemPostedOffset.asText();
 				LocalDateTime currentDateTime= LocalDateTime.now();
@@ -134,6 +138,9 @@ public class WebScraper {
 					else if(offsetString.contains("months")) {
 						finalPostedDate= currentDateTime.minusMonths(offsetAmount);
 					}
+					else if(offsetString.contains("years")) {
+						finalPostedDate= currentDateTime.minusYears(offsetAmount);
+					}
 				}
 				
 				String itemPrice = spanPrice == null ? "0.0" : spanPrice.asText();
@@ -142,13 +149,15 @@ public class WebScraper {
 				Double finalPrice= new Double(itemPrice);
 				finalPrice= finalPrice/7.8; //converting HKD to USD
 				
+//				System.out.println(itemTitle.asText());
+//				System.out.println(finalPostedDate);
+//				System.out.println(finalPrice);
+				
 				item.setTitle(itemTitle.asText());
 				item.setUrl(CAROUSELL_DEFAULT_URL + itemAnchor.getHrefAttribute());
 				item.setPrice(finalPrice);
 				item.setOrigin("Carousell");
 				item.setPostedDate(finalPostedDate);
-//				System.out.println(finalPostedDate.toString());
-//				System.out.println(itemAnchor.asText() + "\t" + SHOPEE_DEFAULT_URL + itemAnchor.getHrefAttribute()+"\t"+ finalPrice); //print to get item URL and price
 				result.add(item);
 			}
 			client.close();
