@@ -101,7 +101,7 @@
                             </Tab>
                               <Tab text="Table">
                                 <content>
-                                  <AnchorPane minHeight="0.0" minWidth="0.0" onMouseClicked="#tableTab" prefHeight="180.0" prefWidth="200.0">
+                                  <AnchorPane minHeight="0.0" minWidth="0.0" onMouseClicked="#updateTableTab" prefHeight="180.0" prefWidth="200.0">
                                        <children>
                                           <TableView fx:id="tableControl" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                             <columns>

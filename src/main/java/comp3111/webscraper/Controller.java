@@ -141,6 +141,19 @@ public class Controller {
     	//refineID.setDisable(true); // set refine button to disable on construction
     }
     
+    private void updateAllTabs() {
+    	updateTableTab();
+    }
+    
+    //to print on console
+    private String printConsole(List<Item> resultOutput) {
+    	String output = "";
+    	for (Item item : resultOutput) {
+    		output += item.getTitle() + "\t" + item.getPrice() + "\t" + item.getOrigin() + "\t" +item.getUrl() + "\n";
+    	}
+    	return output;
+    }
+    
     
     /**
      * Called when the search button is pressed.
@@ -164,8 +177,7 @@ public class Controller {
     	
     	beforeRefine = textFieldKeyword.getText();
     	refineID.setDisable(false);
-    	tableTab(); // run the table tab
-    	
+    	updateAllTabs();
     }
     
     @FXML
@@ -223,13 +235,17 @@ public class Controller {
     	}
     }
     
-    //to print on console
-    private String printConsole(List<Item> resultOutput) {
-    	String output = "";
-    	for (Item item : resultOutput) {
-    		output += item.getTitle() + "\t" + item.getPrice() + "\t" + item.getOrigin() + "\t" +item.getUrl() + "\n";
-    	}
-    	return output;
+    private List<Item> findTitleWithRefineKeyword(List<Item> result, String text) {
+
+		Iterator<Item> iter = result.listIterator();
+		while(iter.hasNext()) {
+			Item item = iter.next();
+			if (item.getTitle().toLowerCase().contains(text.toLowerCase())==false) {    				
+				iter.remove();
+			}
+		}
+    	
+    	return result;
     }
     
     @FXML
@@ -244,24 +260,11 @@ public class Controller {
 
     	if(refineID.isDisabled()==false) {
     		result = scraper.scrape(beforeRefine);
-    		
-//    		for (Iterator<Item> iter = result.listIterator(); iter.hasNext(); ) {
-//    		    Item item = iter.next();
-//    		    if (item.getTitle().contains(textFieldKeywordRefine.getText())==false) {
-//    		        iter.remove();
-//    		    }
-//    		}
-
-    		Iterator<Item> iter = result.listIterator();
-    		while(iter.hasNext()) {
-    			Item item = iter.next();
-    			if (item.getTitle().toLowerCase().contains(textFieldKeywordRefine.getText().toLowerCase())==false) {    				
-    				iter.remove();
-    			}
-    		}
+    		// update result items
+    		result = findTitleWithRefineKeyword(result, textFieldKeywordRefine.getText());
     		
 	    	textAreaConsole.setText(printConsole(result));
-	    	tableTab();
+	    	updateAllTabs();
     	}
     	
     	refineID.setDisable(true);
@@ -327,7 +330,7 @@ public class Controller {
      * Called when the table tab is clicked
      * **/
     @FXML
-    private void tableTab() {
+    private void updateTableTab() {
     	tableControl.setEditable(false);
     	
     	ObservableList<Item> data = FXCollections.observableArrayList(result);
@@ -338,7 +341,10 @@ public class Controller {
     	url.setCellFactory(new HyperlinkCell());
     	postedDate.setCellValueFactory(new PropertyValueFactory<Item,LocalDateTime>("postedDate"));
     	
+    	// Set Data to Table Control
     	tableControl.setItems(data);
+    	
+    	// Set all columns with data
     	tableControl.getColumns().setAll(title,price,url,postedDate);
     
     }
