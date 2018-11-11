@@ -7,19 +7,14 @@ package comp3111.webscraper;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.ComboBox;
 import javafx.scene.Node;
 import javafx.scene.chart.AreaChart;
-import javafx.scene.chart.Axis;
-import javafx.scene.chart.CategoryAxis;
-import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Data;
-import javafx.scene.chart.XYChart.Series;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -27,8 +22,6 @@ import javafx.collections.FXCollections;
 
 import java.util.ArrayList;
 import java.util.List;
-//import com.google.common.collect.EvictingQueue;
-
 
 /**
  * 
@@ -123,23 +116,31 @@ public class Controller {
     }
     
     @FXML
+    /**
+	 * Called when the Value property of the combobox in the Trend tab is changed.
+	 * @author kenneth-id
+	 */
     void trendComboBoxAction(ActionEvent event) {
     	String comboString = comboBoxTrend.getValue();
     	System.out.println(comboString);
     	int index = lastFiveSearches.indexOf(comboString);
-    	System.out.println(index);
     	Trend comboTrend = lastFiveTrends.get(index);
     	updateTrendChart(comboTrend,comboString);
+    	updateConsole(lastFiveResults.get(index));
     }
     
+    /**
+	 * Helper method to update the chart in the Trend tab 
+	 * @author kenneth-id
+	 * @param searchTrend - Trend object 
+	 * @param searchKeyWord - String of the searched keyword 
+	 */
     private void updateTrendChart(Trend searchTrend, String searchKeyWord) {
     	//remove previous linechart
     	areaChartTrend.getData().clear();
-    	searchTrend.initializeTrend(result);
     	XYChart.Series<String, Number> averagePricesSeries = new XYChart.Series<String, Number>();
     	averagePricesSeries.setName("The average selling price of the " + searchKeyWord);
     	int numberOfPoints=0;
-    	//TODO: index properly, not hardcode
     	for(int i=0; i<7;i++) {
     		if(!(searchTrend.getAveragePricesList().get(i).equals(0.0))) {
     		Data<String,Number> point =new Data<String, Number>(searchTrend.getDatesString().get(i), 
@@ -147,16 +148,11 @@ public class Controller {
     		averagePricesSeries.getData().add(point);
     		numberOfPoints++;
     		}
-//    		else {
-//    		averagePricesSeries.getData().add(ne	w Data<String, Number>(searchTrend.getDatesString().get(i), null));  		
-//    		}
     	}
     	areaChartTrend.getData().addAll(averagePricesSeries);
     	final int numberOfPointsFinal = numberOfPoints;
     	//adding double click event handler to each point
-    	//TODO: index properly, not hardcode
     	for(int i=0; i<numberOfPointsFinal;i++) {
-//    		System.out.println("Index in adding listeners"+i);
     		Data<String, Number> currentDataPoint =areaChartTrend.getData().get(0).getData().get(i);
     		Node currentNode =  currentDataPoint.getNode();
     		currentNode.addEventHandler(MouseEvent.MOUSE_PRESSED,
@@ -196,46 +192,56 @@ public class Controller {
     }    
     
     private void updateConsole(List<Item> result) {
-    	String output = "Items posted on that date \n ";
+    	String output = "Items \n ";
     	for (Item item : result) {
     		output += item.getTitle() + "\t" + item.getPrice() +	 "\t" 
     				+ item.getOrigin() +	 "\t" +item.getUrl() + "\n";
     	}
     	textAreaConsole.setText(output); 
     }
+    
+    /**
+	 * Helper method to add a String object to the ArrayList lastFiveSearches 
+	 * @author kenneth-id
+	 * @param toAdd  String object to be added into the ArrayList 
+	 */
     private void addToLastFiveSearches (String toAdd) {
     	if(lastFiveSearches.size()<5 ) {
     		lastFiveSearches.add(toAdd);
-    		System.out.println("added search");
     	}
     	else {
     		lastFiveSearches.remove(0);
     		lastFiveSearches.add(toAdd);
-    		System.out.println("removed oldest and added search");
     	}
     }
     
+    /**
+	 * Helper method to add a List of Items to the ArrayList lastFiveResults 
+	 * @author kenneth-id
+	 * @param toAdd  List of Item objects to be added into the ArrayList 
+	 */
     private void addToLastFiveResults (List<Item> toAdd ) {
     	if(lastFiveSearches.size()<5) {
     		lastFiveResults.add(toAdd);
-    		System.out.println("added results");
     	}
     	else {
     		lastFiveResults.remove(0);
     		lastFiveResults.add(toAdd);
-    		System.out.println("removed oldest and added results");
     	}
     }
     
+    /**
+	 * Helper method to add a Trend object to the ArrayList lastFiveTrends 
+	 * @author kenneth-id
+	 * @param toAdd  Trend object to be added into the ArrayList 
+	 */
     private void addToLastFiveTrends (Trend toAdd ) {
     	if(lastFiveSearches.size()<5) {
     		lastFiveTrends.add(toAdd);
-    		System.out.println("added trend");
     	}
     	else {
     		lastFiveTrends.remove(0);
     		lastFiveTrends.add(toAdd);
-    		System.out.println("removed oldest and added trend");
     	}
     }
     
