@@ -20,7 +20,7 @@ import java.util.Vector;
 public class WebScraper {
 
 	private static final String CRAIGLIST_DEFAULT_URL = "https://newyork.craigslist.org/";
-	private static final String CAROUSELL_DEFAULT_URL = "https://hk.carousell.com/";
+	private static final String CAROUSELL_DEFAULT_URL = "https://hk.carousell.com";
 	private static final DateTimeFormatter craiglistFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 //	private static final DateTimeFormatter finalFormatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
 	
@@ -71,7 +71,7 @@ public class WebScraper {
 				LocalDateTime finalPostedDate=LocalDateTime.parse(postedDateString,craiglistFormatter);
 				Item item = new Item();
 				item.setTitle(itemAnchor.asText());
-				item.setUrl(CRAIGLIST_DEFAULT_URL + itemAnchor.getHrefAttribute());
+				item.setUrl(itemAnchor.getHrefAttribute()); // removed CRAIGLIST_DEFAULT_URL + 
 				item.setPostedDate(finalPostedDate);
 				item.setPrice(new Double(itemPrice.replace("$", "")));
 				item.setOrigin("Craiglist");
@@ -80,22 +80,22 @@ public class WebScraper {
 			}
 			
 			
-			String searchCarousellUrl = CAROUSELL_DEFAULT_URL + "search/products/?query=" + URLEncoder.encode(keyword, "UTF-8");
+			String searchCarousellUrl = CAROUSELL_DEFAULT_URL + "/search/products/?query=" + URLEncoder.encode(keyword, "UTF-8");
 			System.out.println(searchCarousellUrl);
 			HtmlPage carousellPage = client.getPage(searchCarousellUrl);
 			client.waitForBackgroundJavaScriptStartingBefore(50000);
 			
 			WebResponse response = carousellPage.getWebResponse();
 			String content = response.getContentAsString();
-			File debug= new File("/home/kenneth/git/carousell_debug.html");
-			debug.createNewFile();
-			
-			if(!debug.exists()) { 
-		                debug.createNewFile();
-		            }
-		    FileWriter fw = new FileWriter(debug);
-		    fw.write(content);
-		    fw.close();		    
+			//File debug= new File("/home/kenneth/git/carousell_debug.html");
+			//debug.createNewFile();
+//			
+//			if(!debug.exists()) { 
+//		                debug.createNewFile();
+//		            }
+//		    FileWriter fw = new FileWriter(debug);
+//		    fw.write(content);
+//		    fw.close();		    
 		    
 			List<?> carousellItems = (List<?>) carousellPage.getByXPath("//*[@id=\"root\"]/div/div[1]/div[1]/div[2]/div[2]/div[4]/div[1]/div");
 			System.out.println("size of carousellItems list= " + carousellItems.size());
@@ -146,7 +146,7 @@ public class WebScraper {
 				finalPrice= finalPrice/7.8; //converting HKD to USD
 				
 				item.setTitle(itemTitle.asText());
-				item.setUrl(CAROUSELL_DEFAULT_URL + itemAnchor.getHrefAttribute());
+				item.setUrl(CAROUSELL_DEFAULT_URL + itemAnchor.getHrefAttribute()); // removed CAROUSELL_DEFAULT_URL + 
 				item.setPrice(finalPrice);
 				item.setOrigin("Carousell");
 				item.setPostedDate(finalPostedDate);

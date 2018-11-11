@@ -27,11 +27,7 @@
 
 <!-- this line specific which class is your controller - comp3111.webscraper.Controller. Thus all events shall be handled by this class -->
 
-<<<<<<< HEAD
-<VBox prefHeight="400.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="comp3111.webscraper.Controller">
-=======
 <VBox prefHeight="400.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="comp3111.webscraper.Controller">
->>>>>>> Added Basic Task 4 and 5
   <children>
   
   	<!-- This is your MenuBar -->
@@ -63,23 +59,11 @@
               <items>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
                      <children>
-<<<<<<< HEAD
                         <TextField fx:id="textFieldKeyword" layoutX="8.0" layoutY="36.0" prefHeight="25.0" prefWidth="131.0" promptText="Keyword" />
                         <!--  this is the Go button. When it is clicked, it calls Controller.actionSearch() -->
-                        <Button layoutX="143.0" layoutY="36.0" mnemonicParsing="false" onAction="#actionSearch" prefHeight="26.0" prefWidth="41.0" text="Go" />
-=======
-                        <TextField fx:id="textFieldKeyword" layoutX="14.0" layoutY="36.0" prefHeight="25.0" prefWidth="131.0" promptText="Keyword" />
-                        <!--  this is the Go button. When it is clicked, it calls Controller.actionSearch() -->
                         <Button fx:id="goID" layoutX="145.0" layoutY="36.0" mnemonicParsing="false" onAction="#actionSearch" prefHeight="25.0" prefWidth="35.0" text="Go" />
-<<<<<<< HEAD
                         <Button fx:id="refineID" layoutX="124.0" layoutY="73.0" mnemonicParsing="false" onAction="#refineSearch" onMouseClicked="#mouseClicked" prefHeight="26.0" prefWidth="55.0" text="Refine" />
-                        <TextField fx:id="textFieldKeywordRefine" layoutX="14.0" layoutY="73.0" prefHeight="26.0" prefWidth="112.0" promptText="Keyword" />
->>>>>>> Added Basic Task 4 and 5
-=======
-                        <Button fx:id="refineID" graphicTextGap="5.0" layoutX="124.0" layoutY="77.0" mnemonicParsing="false" onAction="#refineSearch" onMouseClicked="#mouseClicked" prefHeight="26.0" prefWidth="55.0" text="Refine" />
-                        <TextField fx:id="textFieldKeywordRefine" layoutX="14.0" layoutY="77.0" prefHeight="26.0" prefWidth="112.0" promptText="Keyword" />
->>>>>>> Modify for Basic Task 4 and 5
-
+                        <TextField fx:id="textFieldKeywordRefine" layoutX="8.0" layoutY="73.0" prefHeight="26.0" prefWidth="112.0" promptText="Keyword" />
                      </children>
                   </AnchorPane>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
@@ -104,7 +88,6 @@
                                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                        <children>
                                           <Label layoutX="51.0" layoutY="48.0" text="Number of Data Fetched:" />
-<<<<<<< HEAD
                                           <Label fx:id="labelCount" layoutX="233.0" layoutY="48.0" prefHeight="17.0" prefWidth="78.0" text="&lt;total&gt;" />
                                           <Label layoutX="51.0" layoutY="88.0" prefHeight="17.0" prefWidth="148.0" text="Average Selling Price:" />
                                           <Label fx:id="labelPrice" layoutX="219.0" layoutY="88.0" text="&lt;AvgPrice&gt;" />
@@ -112,31 +95,12 @@
                                           <Hyperlink fx:id="labelMin" layoutX="222.0" layoutY="125.0" text="&lt;Lowest&gt;" />
                                           <Label layoutX="51.0" layoutY="164.0" text="Latest Post:" />
                                           <Hyperlink fx:id="labelLatest" layoutX="222.0" layoutY="164.0" text="&lt;Latest&gt;" />
-=======
-                                          <Label fx:id="labelCount" layoutX="198.0" layoutY="48.0" prefHeight="17.0" prefWidth="78.0" text="&lt;total&gt;" />
-                                          <Label layoutX="51.0" layoutY="88.0" prefHeight="17.0" prefWidth="131.0" text="Average Selling Price:" />
-                                          <Label fx:id="labelPrice" layoutX="198.0" layoutY="88.0" text="&lt;AvgPrice&gt;" />
-                                          <Label layoutX="51.0" layoutY="128.0" text="Lowest Selling Price:" />
-                                          <Hyperlink fx:id="labelMin" layoutX="198.0" layoutY="128.0" text="&lt;Lowest&gt;" />
-                                          <Label layoutX="51.0" layoutY="164.0" text="Latest Post:" />
-                                          <Hyperlink fx:id="labelLatest" layoutX="198.0" layoutY="164.0" text="&lt;Latest&gt;" />
->>>>>>> Added Basic Task 4 and 5
                                        </children>
                                     </AnchorPane>
                               </content>
                             </Tab>
                               <Tab text="Table">
                                 <content>
-<<<<<<< HEAD
-                                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                                       <children>
-                                          <TableView AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                            <columns>
-                                              <TableColumn editable="false" prefWidth="154.0" text="Title" />
-                                              <TableColumn editable="false" prefWidth="90.0" text="Price" />
-                                                <TableColumn editable="false" prefWidth="78.0" text="URL" />
-                                                <TableColumn editable="false" prefWidth="88.0" text="Posted Date" />
-=======
                                   <AnchorPane minHeight="0.0" minWidth="0.0" onMouseClicked="#tableTab" prefHeight="180.0" prefWidth="200.0">
                                        <children>
                                           <TableView fx:id="tableControl" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -145,7 +109,6 @@
                                               <TableColumn fx:id="price" editable="false" prefWidth="90.0" text="Price" />
                                                 <TableColumn fx:id="url" editable="false" prefWidth="78.0" text="URL" />
                                                 <TableColumn fx:id="postedDate" editable="false" prefWidth="88.0" text="Posted Date" />
->>>>>>> Added Basic Task 4 and 5
                                             </columns>
                                           </TableView>
                                        </children>
@@ -172,7 +135,6 @@
                                 <content>
                                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                        <children>
-<<<<<<< HEAD
                                           <ComboBox fx:id="comboBoxTrend" layoutX="273.0" layoutY="14.0" onAction="#trendComboBoxAction" prefWidth="150.0" promptText="Search Record" visibleRowCount="5" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0" />
                                           <AreaChart fx:id="areaChartTrend" layoutX="-41.0" layoutY="-62.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="30.0">
                                             <xAxis>
@@ -180,15 +142,6 @@
                                             </xAxis>
                                             <yAxis>
                                               <NumberAxis label="Average Price (USD)" side="LEFT" />
-=======
-                                          <ComboBox layoutX="273.0" layoutY="14.0" prefWidth="150.0" promptText="Search Record" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0" />
-                                          <AreaChart layoutX="-41.0" layoutY="-62.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="30.0">
-                                            <xAxis>
-                                              <CategoryAxis side="BOTTOM" />
-                                            </xAxis>
-                                            <yAxis>
-                                              <NumberAxis side="LEFT" />
->>>>>>> Added Basic Task 4 and 5
                                             </yAxis>
                                           </AreaChart>
                                        </children>

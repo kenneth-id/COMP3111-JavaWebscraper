@@ -39,7 +39,7 @@ import java.net.URL;
 import java.util.Iterator;
 import java.util.List;
 //import com.google.common.collect.EvictingQueue;
-
+import java.util.ListIterator;
 import java.awt.*;
 import javafx.application.HostServices;
 
@@ -49,6 +49,7 @@ import javafx.collections.ObservableList;
 import javafx.collections.FXCollections;
 import javafx.scene.control.cell.PropertyValueFactory;
 
+import java.time.LocalDateTime;
 
 
 
@@ -95,6 +96,7 @@ public class Controller {
     
     private ArrayList<List<Item>> lastFiveResults;
     
+    @FXML
     private TableView<Item> tableControl;
 
     @FXML
@@ -107,7 +109,7 @@ public class Controller {
     private TableColumn<Item, String> url;
 
     @FXML
-    private TableColumn postedDate;
+    private TableColumn<Item, LocalDateTime> postedDate;
     
     @FXML
     private Button refineID;
@@ -136,7 +138,7 @@ public class Controller {
      */
     @FXML
     private void initialize() {
-    	
+    	//refineID.setDisable(true); // set refine button to disable on construction
     }
     
     
@@ -145,9 +147,8 @@ public class Controller {
      */
     @FXML
     private void actionSearch() {
-    	String searchKeyWord =textFieldKeyword.getText();
+    	String searchKeyWord = textFieldKeyword.getText();
     	System.out.println("actionSearch: " + searchKeyWord);
-    	
     	
     	comboBoxTrend.setItems(lastFiveSearches);
     	result = scraper.scrape(searchKeyWord);
@@ -156,14 +157,15 @@ public class Controller {
 	    	addToLastFiveSearches(searchKeyWord);
 	    	addToLastFiveResults(result);
     	}
-    	updateTrendChart(result,searchKeyWord);
+    	updateTrendChart(result, searchKeyWord);
     	
     	String output = "Items scraped from craiglist and carousell (Currency in USD) \n ";
-    	for (Item item : result) {
-    		output += item.getTitle() + "\t" + item.getPrice() +	 "\t" + item.getOrigin() +	 "\t" +item.getUrl() + "\n";
-//    		System.out.println(item.getPostedDate().toString());
-    	}
-    	textAreaConsole.setText(output); 	
+    	textAreaConsole.setText(output+printConsole(result)); 	
+    	
+    	beforeRefine = textFieldKeyword.getText();
+    	refineID.setDisable(false);
+    	tableTab(); // run the table tab
+    	
     }
     
     @FXML
@@ -210,10 +212,6 @@ public class Controller {
     		         }
     		    });
     	}
-    	beforeRefine = textFieldKeyword.getText();
-    	
-    	tableTab();
-    	refineID.setDisable(false);
     }
     
 
@@ -224,6 +222,16 @@ public class Controller {
     		return;
     	}
     }
+    
+    //to print on console
+    private String printConsole(List<Item> resultOutput) {
+    	String output = "";
+    	for (Item item : resultOutput) {
+    		output += item.getTitle() + "\t" + item.getPrice() + "\t" + item.getOrigin() + "\t" +item.getUrl() + "\n";
+    	}
+    	return output;
+    }
+    
     @FXML
     private void refineSearch() {
     	//System.out.println("actionSearch: " + textFieldKeyword.getText());
@@ -235,20 +243,24 @@ public class Controller {
     	}
 
     	if(refineID.isDisabled()==false) {
-//	    	List<Item> result = scraper.scrape(beforeRefine + " " + textFieldKeywordRefine.getText());
     		result = scraper.scrape(beforeRefine);
     		
-    		for (Iterator<Item> iter = result.listIterator(); iter.hasNext(); ) {
-    		    Item item = iter.next();
-    		    if (!item.getTitle().contains(textFieldKeywordRefine.getText())) {
-    		        iter.remove();
-    		    }
+//    		for (Iterator<Item> iter = result.listIterator(); iter.hasNext(); ) {
+//    		    Item item = iter.next();
+//    		    if (item.getTitle().contains(textFieldKeywordRefine.getText())==false) {
+//    		        iter.remove();
+//    		    }
+//    		}
+
+    		Iterator<Item> iter = result.listIterator();
+    		while(iter.hasNext()) {
+    			Item item = iter.next();
+    			if (item.getTitle().toLowerCase().contains(textFieldKeywordRefine.getText().toLowerCase())==false) {    				
+    				iter.remove();
+    			}
     		}
-    		String output = "";
-	    	for (Item item : result) {
-    		output += item.getTitle() + "\t" + item.getPrice() + "\t" + item.getUrl() + "\n";
-	    	}	
-	    	textAreaConsole.setText(output);
+    		
+	    	textAreaConsole.setText(printConsole(result));
 	    	tableTab();
     	}
     	
@@ -322,12 +334,12 @@ public class Controller {
     	
     	title.setCellValueFactory(new PropertyValueFactory<Item,String>("title"));
     	price.setCellValueFactory(new PropertyValueFactory<Item,Double>("price"));
-    	
     	url.setCellValueFactory(new PropertyValueFactory<Item,String>("url"));
     	url.setCellFactory(new HyperlinkCell());
+    	postedDate.setCellValueFactory(new PropertyValueFactory<Item,LocalDateTime>("postedDate"));
     	
     	tableControl.setItems(data);
-    	tableControl.getColumns().setAll(title,price,url);
+    	tableControl.getColumns().setAll(title,price,url,postedDate);
     
     }
 }
