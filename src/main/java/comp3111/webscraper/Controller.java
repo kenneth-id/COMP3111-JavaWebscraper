@@ -206,7 +206,7 @@ public class Controller {
     		averagePricesSeries.getData().add(point); 		
 //    		}
 //    		else {
-//    		averagePricesSeries.getData().add(ne	w Data<String, Number>(searchTrend.getDatesString().get(i), null));  		
+//    		averagePricesSeries.getData().add(new Data<String, Number>(searchTrend.getDatesString().get(i), null));  		
 //    		}
     	}
     	areaChartTrend.getData().addAll(averagePricesSeries);
