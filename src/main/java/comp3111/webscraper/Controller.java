@@ -1,11 +1,11 @@
-/**
- * 
- */
 package comp3111.webscraper;
 
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.control.TextArea;
@@ -22,6 +22,26 @@ import javafx.collections.FXCollections;
 
 import java.util.ArrayList;
 import java.util.List;
+
+
+import java.awt.Desktop;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.Iterator;
+import java.util.List;
+//import com.google.common.collect.EvictingQueue;
+import java.util.ListIterator;
+import java.awt.*;
+import javafx.application.HostServices;
+
+
+import javafx.util.Callback;
+import javafx.collections.FXCollections;
+import javafx.scene.control.cell.PropertyValueFactory;
+
+import java.time.LocalDateTime;
 
 /**
  * 
@@ -67,6 +87,33 @@ public class Controller {
     
     private ArrayList<Trend> lastFiveTrends;
     
+    @FXML
+    private TableView<Item> tableControl;
+
+    @FXML
+    private TableColumn title;
+
+    @FXML
+    private TableColumn price;
+
+    @FXML
+    private TableColumn<Item, String> url;
+
+    @FXML
+    private TableColumn<Item, LocalDateTime> postedDate;
+    
+    @FXML
+    private Button refineID;
+
+    @FXML
+    private Button goID;
+    
+    @FXML
+    private TextField textFieldKeywordRefine;
+    
+    private String beforeRefine; // to store keyword before refining
+    
+    
     /**
      * Default controller
      */
@@ -82,8 +129,13 @@ public class Controller {
      */
     @FXML
     private void initialize() {
-    	
+    	//refineID.setEnabled(false)(true); // set refine button to disable on construction
     }
+
+    private void updateAllTabs() {
+    	updateTableTab();
+    }
+    
     
     /**
      * Called when the search button is pressed.
@@ -106,13 +158,19 @@ public class Controller {
     	}
     	
     	updateTrendChart(searchTrend,searchKeyWord);
+//    	
+//    	String output = "Items scraped from craiglist and carousell (Currency in USD) \n ";
+//    	for (Item item : result) {
+//    		output += item.getTitle() + "\t" + item.getPrice() +	 "\t" 
+//    	+ item.getOrigin() +	 "\t" +item.getUrl() + "\n";
+//    	}
+//    	textAreaConsole.setText(output);
     	
-    	String output = "Items scraped from craiglist and carousell (Currency in USD) \n ";
-    	for (Item item : result) {
-    		output += item.getTitle() + "\t" + item.getPrice() +	 "\t" 
-    	+ item.getOrigin() +	 "\t" +item.getUrl() + "\n";
-    	}
-    	textAreaConsole.setText(output); 	
+    	updateConsole(result);
+
+    	beforeRefine = textFieldKeyword.getText();
+    	refineID.setEnabled(true);
+    	updateAllTabs();
     }
     
     @FXML
@@ -192,12 +250,14 @@ public class Controller {
     }    
     
     private void updateConsole(List<Item> result) {
-    	String output = "Items \n ";
+    	System.out.println("Items: \n");
+    	String output = "";
     	for (Item item : result) {
     		output += item.getTitle() + "\t" + item.getPrice() +	 "\t" 
     				+ item.getOrigin() +	 "\t" +item.getUrl() + "\n";
     	}
-    	textAreaConsole.setText(output); 
+    	
+    	textAreaConsole.setText(output);
     }
     
     /**
@@ -245,5 +305,100 @@ public class Controller {
     	}
     }
     
+
+    @FXML
+    private void mouseClicked() {
+    	if(textAreaConsole.getText().isEmpty()) {
+    		refineID.setEnabled(false);
+    		return;
+    	}
+    }
+    
+    private List<Item> findTitleWithRefineKeyword(List<Item> result, String text) {
+
+		Iterator<Item> iter = result.listIterator();
+		while(iter.hasNext()) {
+			Item item = iter.next();
+			if (item.getTitle().toLowerCase().contains(text.toLowerCase())==false) {    				
+				iter.remove();
+			}
+		}
+    	
+    	return result;
+    }
+    
+    @FXML
+    private void refineSearch() {
+    	//System.out.println("actionSearch: " + textFieldKeyword.getText());
+    	
+    	//if(textFieldKeyword.getText().isEmpty() && textFieldKeywordRefine.getText().isEmpty()) 
+    	if(textAreaConsole.getText().isEmpty()) {
+    		refineID.setEnabled(false);
+    		return;
+    	}
+
+    	if(refineID.isEnabled()==true) {
+    		result = scraper.scrape(beforeRefine);
+    		// update result items
+    		result = findTitleWithRefineKeyword(result, textFieldKeywordRefine.getText());
+    		
+	    	//textAreaConsole.setText(printConsole(result));
+	    	
+    		updateConsole(result);
+    		updateAllTabs();
+    	}
+    	
+    	refineID.setEnabled(false);
+    }
+    
+	private static class HyperlinkCell implements  Callback<TableColumn<Item, String>, TableCell<Item, String>> {
+	    @Override
+	    public TableCell<Item, String> call(TableColumn<Item, String> arg) {
+	        TableCell<Item, String> cell = new TableCell<Item, String>() {
+	            @Override
+	            protected void updateItem(String item, boolean empty) {
+	            	Hyperlink item_casted = new Hyperlink(item);
+	                setGraphic(item_casted);
+	                item_casted.setOnAction(new EventHandler<ActionEvent>() {
+						@Override
+						public void handle(ActionEvent arg0) {
+							try {
+								Desktop.getDesktop().browse(new URI(item));
+							} catch(IOException e1) {
+								e1.printStackTrace();
+							} catch(URISyntaxException e1) {
+								e1.printStackTrace();
+							}
+						}
+	                	
+	                });
+	            }
+	        };
+	        return cell;
+	    }
+	}
+    
+    /** Task 4: Fill out table
+     * Called when the table tab is clicked
+     * **/
+    @FXML
+    private void updateTableTab() {
+    	tableControl.setEditable(false);
+    	
+    	ObservableList<Item> data = FXCollections.observableArrayList(result);
+    	
+    	title.setCellValueFactory(new PropertyValueFactory<Item,String>("title"));
+    	price.setCellValueFactory(new PropertyValueFactory<Item,Double>("price"));
+    	url.setCellValueFactory(new PropertyValueFactory<Item,String>("url"));
+    	url.setCellFactory(new HyperlinkCell());
+    	postedDate.setCellValueFactory(new PropertyValueFactory<Item,LocalDateTime>("postedDate"));
+    	
+    	// Set Data to Table Control
+    	tableControl.setItems(data);
+    	
+    	// Set all columns with data
+    	tableControl.getColumns().setAll(title,price,url,postedDate);
+    
+    }
 }
 
