@@ -61,8 +61,9 @@
                      <children>
                         <TextField fx:id="textFieldKeyword" layoutX="8.0" layoutY="36.0" prefHeight="25.0" prefWidth="131.0" promptText="Keyword" />
                         <!--  this is the Go button. When it is clicked, it calls Controller.actionSearch() -->
-                        <Button layoutX="143.0" layoutY="36.0" mnemonicParsing="false" onAction="#actionSearch" prefHeight="26.0" prefWidth="41.0" text="Go" />
-
+                        <Button fx:id="goID" layoutX="142.0" layoutY="36.0" mnemonicParsing="false" onAction="#actionSearch" prefHeight="26.0" prefWidth="39.0" text="Go" />
+                        <Button fx:id="refineID" layoutX="124.0" layoutY="73.0" mnemonicParsing="false" onAction="#refineSearch" onMouseClicked="#mouseClicked" prefHeight="26.0" prefWidth="55.0" text="Refine" />
+                        <TextField fx:id="textFieldKeywordRefine" layoutX="8.0" layoutY="73.0" prefHeight="26.0" prefWidth="112.0" promptText="Keyword" />
                      </children>
                   </AnchorPane>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
@@ -100,14 +101,14 @@
                             </Tab>
                               <Tab text="Table">
                                 <content>
-                                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                  <AnchorPane minHeight="0.0" minWidth="0.0" onMouseClicked="#updateTableTab" prefHeight="180.0" prefWidth="200.0">
                                        <children>
-                                          <TableView AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                          <TableView fx:id="tableControl" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                             <columns>
-                                              <TableColumn editable="false" prefWidth="154.0" text="Title" />
-                                              <TableColumn editable="false" prefWidth="90.0" text="Price" />
-                                                <TableColumn editable="false" prefWidth="78.0" text="URL" />
-                                                <TableColumn editable="false" prefWidth="88.0" text="Posted Date" />
+                                              <TableColumn fx:id="title" editable="false" prefWidth="154.0" text="Title" />
+                                              <TableColumn fx:id="price" editable="false" prefWidth="90.0" text="Price" />
+                                                <TableColumn fx:id="url" editable="false" prefWidth="78.0" text="URL" />
+                                                <TableColumn fx:id="postedDate" editable="false" prefWidth="88.0" text="Posted Date" />
                                             </columns>
                                           </TableView>
                                        </children>

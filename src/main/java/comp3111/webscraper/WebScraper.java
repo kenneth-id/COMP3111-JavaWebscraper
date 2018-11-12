@@ -22,7 +22,7 @@ import java.util.Vector;
 public class WebScraper {
 
 	private static final String CRAIGLIST_DEFAULT_URL = "https://newyork.craigslist.org/";
-	private static final String CAROUSELL_DEFAULT_URL = "https://hk.carousell.com/";
+	private static final String CAROUSELL_DEFAULT_URL = "https://hk.carousell.com";
 	private static final DateTimeFormatter craiglistFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 	
 	private WebClient client;
@@ -69,7 +69,8 @@ public class WebScraper {
 				LocalDateTime finalPostedDate=LocalDateTime.parse(postedDateString,craiglistFormatter);
 				Item item = new Item();
 				item.setTitle(itemAnchor.asText());
-				item.setUrl(CRAIGLIST_DEFAULT_URL + itemAnchor.getHrefAttribute());
+//				item.setUrl(CRAIGLIST_DEFAULT_URL + itemAnchor.getHrefAttribute());
+				item.setUrl(itemAnchor.getHrefAttribute());
 				item.setPostedDate(finalPostedDate);
 				item.setPrice(new Double(itemPrice.replace("$", "")));
 				item.setOrigin("Craiglist");
@@ -78,7 +79,7 @@ public class WebScraper {
 			}
 			
 			
-			String searchCarousellUrl = CAROUSELL_DEFAULT_URL + "search/products/?query=" + URLEncoder.encode(keyword, "UTF-8");
+			String searchCarousellUrl = CAROUSELL_DEFAULT_URL + "/search/products/?query=" + URLEncoder.encode(keyword, "UTF-8");
 			HtmlPage carousellPage = client.getPage(searchCarousellUrl);
 			client.waitForBackgroundJavaScriptStartingBefore(50000);
 		    
@@ -162,17 +163,17 @@ public class WebScraper {
 	 * @throws IOException when there is an error
 	 */
 	private void generateHTMLPage(HtmlPage webPage) throws IOException {
-		WebResponse response = webPage.getWebResponse();
-		String content = response.getContentAsString();
-		File debug= new File("/home/kenneth/git/carousell_debug.html");
-		debug.createNewFile();
-		
-		if(!debug.exists()) { 
-	                debug.createNewFile();
-	            }
-	    FileWriter fw = new FileWriter(debug);
-	    fw.write(content);
-	    fw.close();
+//		WebResponse response = webPage.getWebResponse();
+//		String content = response.getContentAsString();
+//		File debug= new File("/home/kenneth/git/carousell_debug.html"); // needs to change to run in other files
+//		debug.createNewFile();
+//		
+//		if(!debug.exists()) { 
+//	                debug.createNewFile();
+//	            }
+//	    FileWriter fw = new FileWriter(debug);
+//	    fw.write(content);
+//	    fw.close();
 	}
 
 }
