@@ -13,9 +13,9 @@ local.properties
 .recommenders
 
 build/
-! build/jacoco
-! build/jacocoHTML
-! build/reports
+!build/jacoco
+!build/jacocoHTML
+!build/reports
 
 # External tool builders
 .externalToolBuilders/
