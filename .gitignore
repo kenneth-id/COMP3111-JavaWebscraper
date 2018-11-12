@@ -5,3 +5,11 @@ target/*
 bin
 bin/*
 /.gradle/
+*.bin
+*.html
+*.class
+*.tar
+*.zip
+*.exec
+*.jar
+*.xml
