@@ -2,6 +2,7 @@ package comp3111.webscraper;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.net.URLEncoder;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -12,17 +13,17 @@ import com.gargoylesoftware.htmlunit.WebResponse;
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.BrowserVersion;
 import java.util.Vector;
-//TODO: sorting
-//TODO: get PostedDate
 
+/**
+ * Webscraper class, use it to scrape websites 
+ * @author kenneth-id
+ */
 public class WebScraper {
 
 	private static final String CRAIGLIST_DEFAULT_URL = "https://newyork.craigslist.org/";
 	private static final String CAROUSELL_DEFAULT_URL = "https://hk.carousell.com";
 	private static final DateTimeFormatter craiglistFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-//	private static final DateTimeFormatter finalFormatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
 	
 	private WebClient client;
 
@@ -32,13 +33,13 @@ public class WebScraper {
 	public WebScraper() {
 		client = new WebClient();
 		client.getOptions().setCssEnabled(false);
-		client.getOptions().setJavaScriptEnabled(false);
-//		System.out.println(client.getBrowserVersion().getApplicationName()); print to get browser version		
+		client.getOptions().setJavaScriptEnabled(false);	
 	}
 
 	/**
-	 * The only method implemented in this class, to scrape web content from the craigslist
+	 * Main method of this class: scrape web content from Craiglist and Carousell 
 	 * 
+	 * @author kenneth-id
 	 * @param keyword - the keyword you want to search
 	 * @return A list of Item that has found. A zero size list is return if nothing is found. Null if any exception (e.g. no connectivity)
 	 */
@@ -48,10 +49,7 @@ public class WebScraper {
 			
 			String searchCraiglistUrl = CRAIGLIST_DEFAULT_URL + "search/sss?sort=rel&query=" + URLEncoder.encode(keyword, "UTF-8");
 			HtmlPage craiglistPage = client.getPage(searchCraiglistUrl);
-			client.waitForBackgroundJavaScriptStartingBefore(50000);
-
-
-			
+			client.waitForBackgroundJavaScriptStartingBefore(50000);			
 			List<?> craiglistItems = (List<?>) craiglistPage.getByXPath("//li[@class='result-row']");
 			System.out.println("size of craiglistItems list= " + craiglistItems.size());		
 			
@@ -71,7 +69,8 @@ public class WebScraper {
 				LocalDateTime finalPostedDate=LocalDateTime.parse(postedDateString,craiglistFormatter);
 				Item item = new Item();
 				item.setTitle(itemAnchor.asText());
-				item.setUrl(itemAnchor.getHrefAttribute()); // removed CRAIGLIST_DEFAULT_URL + 
+//				item.setUrl(CRAIGLIST_DEFAULT_URL + itemAnchor.getHrefAttribute());
+				item.setUrl(itemAnchor.getHrefAttribute());
 				item.setPostedDate(finalPostedDate);
 				item.setPrice(new Double(itemPrice.replace("$", "")));
 				item.setOrigin("Craiglist");
@@ -81,21 +80,8 @@ public class WebScraper {
 			
 			
 			String searchCarousellUrl = CAROUSELL_DEFAULT_URL + "/search/products/?query=" + URLEncoder.encode(keyword, "UTF-8");
-			System.out.println(searchCarousellUrl);
 			HtmlPage carousellPage = client.getPage(searchCarousellUrl);
 			client.waitForBackgroundJavaScriptStartingBefore(50000);
-			
-			WebResponse response = carousellPage.getWebResponse();
-			String content = response.getContentAsString();
-			//File debug= new File("/home/kenneth/git/carousell_debug.html");
-			//debug.createNewFile();
-//			
-//			if(!debug.exists()) { 
-//		                debug.createNewFile();
-//		            }
-//		    FileWriter fw = new FileWriter(debug);
-//		    fw.write(content);
-//		    fw.close();		    
 		    
 			List<?> carousellItems = (List<?>) carousellPage.getByXPath("//*[@id=\"root\"]/div/div[1]/div[1]/div[2]/div[2]/div[4]/div[1]/div");
 			System.out.println("size of carousellItems list= " + carousellItems.size());
@@ -105,6 +91,10 @@ public class WebScraper {
 				HtmlElement spanPrice = ((HtmlElement) htmlItem.getFirstByXPath("./div//figure/div/figcaption/a/div[2]/div[1]"));
 				HtmlElement itemTitle = ((HtmlElement) htmlItem.getFirstByXPath("./div//figure/div/figcaption/a/div[1]/div"));
 				HtmlElement itemPostedOffset = ((HtmlElement) htmlItem.getFirstByXPath("./div/figure/div/a/div[2]/time/span"));
+				
+				if(itemAnchor == null || spanPrice== null || itemTitle== null || itemPostedOffset == null) {
+					continue;
+				}
 				
 				Item item = new Item();
 				String offsetString= itemPostedOffset.asText();
@@ -126,7 +116,6 @@ public class WebScraper {
 					if(!stringDigits.isEmpty()) {
 						offsetAmount= Integer.parseInt(stringDigits);
 					}
-//					System.out.println(offsetAmount);
 					
 					if(offsetString.contains("hours")) {
 						finalPostedDate= currentDateTime.minusHours(offsetAmount);
@@ -137,6 +126,9 @@ public class WebScraper {
 					else if(offsetString.contains("months")) {
 						finalPostedDate= currentDateTime.minusMonths(offsetAmount);
 					}
+					else if(offsetString.contains("years")) {
+						finalPostedDate= currentDateTime.minusYears(offsetAmount);
+					}
 				}
 				
 				String itemPrice = spanPrice == null ? "0.0" : spanPrice.asText();
@@ -146,12 +138,10 @@ public class WebScraper {
 				finalPrice= finalPrice/7.8; //converting HKD to USD
 				
 				item.setTitle(itemTitle.asText());
-				item.setUrl(CAROUSELL_DEFAULT_URL + itemAnchor.getHrefAttribute()); // removed CAROUSELL_DEFAULT_URL + 
+				item.setUrl(CAROUSELL_DEFAULT_URL + itemAnchor.getHrefAttribute());
 				item.setPrice(finalPrice);
 				item.setOrigin("Carousell");
 				item.setPostedDate(finalPostedDate);
-//				System.out.println(finalPostedDate.toString());
-//				System.out.println(itemAnchor.asText() + "\t" + SHOPEE_DEFAULT_URL + itemAnchor.getHrefAttribute()+"\t"+ finalPrice); //print to get item URL and price
 				result.add(item);
 			}
 			client.close();
@@ -162,6 +152,28 @@ public class WebScraper {
 			System.out.println(e);
 		}
 		return null;
+	}
+	
+	
+	/**
+	 * helper method of this class, use it for debugging purposes. 
+	 * @author kenneth-id
+	 * @param webPage - a HTMLPage you get from the .getPage function
+	 * @return .HTML file in the directory you specify. Change it because I am using my own directory there
+	 * @throws IOException when there is an error
+	 */
+	private void generateHTMLPage(HtmlPage webPage) throws IOException {
+//		WebResponse response = webPage.getWebResponse();
+//		String content = response.getContentAsString();
+//		File debug= new File("/home/kenneth/git/carousell_debug.html"); // needs to change to run in other files
+//		debug.createNewFile();
+//		
+//		if(!debug.exists()) { 
+//	                debug.createNewFile();
+//	            }
+//	    FileWriter fw = new FileWriter(debug);
+//	    fw.write(content);
+//	    fw.close();
 	}
 
 }

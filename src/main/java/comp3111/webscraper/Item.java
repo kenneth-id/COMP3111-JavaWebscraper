@@ -28,23 +28,55 @@ public class Item  {
 	public void setUrl(String url) {
 		this.url = url;
 	}
+	
+	/**
+	 * Helper method to get the String object, origin
+	 * @author kenneth-id
+	 * @return A String object, origin
+	 */
 	public String getOrigin() {
 		return origin;
 	}
+	
+	/**
+	 * Helper method to set the String object origin 
+	 * @author kenneth-id
+	 * @param origin - String object to be set as origin of the Item 
+	 */
 	public void setOrigin(String origin) {
 		this.origin=origin;
 	}
 	
+	/**
+	 * Helper method to get the LocalDateTime object postedDate 
+	 * @author kenneth-id
+	 * @return LocalDateTime object posted date
+	 */
 	public LocalDateTime getPostedDate() {
 		return postedDate;
 	}
 	
+	/**
+	 * Helper method to set postedDate attribute 
+	 * @author kenneth-id
+	 * @param postedDate LocalDateTime object to be set as the attribute postedDate 
+	 */
 	public void setPostedDate(LocalDateTime postedDate) {
 		this.postedDate= postedDate;
 	}
 	
+	/**
+	 * Helper method to get an Arraylist of Item objects from the list of lists ItemLists 
+	 * @author kenneth-id
+	 * @param index - integer that specifies the index you want to get 
+	 * @return The ArrayList of Items specified by the index, returns -1 if String is not found
+	 * @throws IndexOutOfBoundsException - if the index is out of range (index < 0 || index >= size())
+	 */
 	
-	
+	/**
+	 * Comparator object to sort the result from webscraper by price ascending, if the price is the same, craiglist items are listed first 
+	 * @author kenneth-id
+	 */
 	public static Comparator<Item> COMPARE_BY_Price = new Comparator<Item>() {
         public int compare(Item one, Item other) {
             int value1 =one.price.compareTo(other.price);
@@ -55,12 +87,6 @@ public class Item  {
             else {
             return value1;
             }
-        }
-    };
-    
-    public static Comparator<Item> COMPARE_BY_Origin = new Comparator<Item>() {
-        public int compare(Item one, Item other) {
-            return other.origin.compareTo(one.origin);
         }
     };
 }
