@@ -19,6 +19,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.collections.FXCollections;
+import javafx.scene.control.Button;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +35,8 @@ import java.util.List;
 //import com.google.common.collect.EvictingQueue;
 import java.util.ListIterator;
 import java.awt.*;
+//import java.awt.Button;
+
 import javafx.application.HostServices;
 
 
@@ -129,14 +132,14 @@ public class Controller {
      */
     @FXML
     private void initialize() {
-    	//refineID.setEnabled(false)(true); // set refine button to disable on construction
+    	//refineID.setDisable(true); // set refine button to disable on construction
     }
 
     private void updateAllTabs() {
     	updateTableTab();
     }
     
-    
+    	
     /**
      * Called when the search button is pressed.
      */
@@ -169,7 +172,7 @@ public class Controller {
     	updateConsole(result);
 
     	beforeRefine = textFieldKeyword.getText();
-    	refineID.setEnabled(true);
+    	refineID.setDisable(false);
     	updateAllTabs();
     }
     
@@ -309,7 +312,7 @@ public class Controller {
     @FXML
     private void mouseClicked() {
     	if(textAreaConsole.getText().isEmpty()) {
-    		refineID.setEnabled(false);
+    		refineID.setDisable(true);
     		return;
     	}
     }
@@ -333,11 +336,11 @@ public class Controller {
     	
     	//if(textFieldKeyword.getText().isEmpty() && textFieldKeywordRefine.getText().isEmpty()) 
     	if(textAreaConsole.getText().isEmpty()) {
-    		refineID.setEnabled(false);
+    		refineID.setDisable(true);
     		return;
     	}
 
-    	if(refineID.isEnabled()==true) {
+    	if(refineID.isDisabled()==false) {
     		result = scraper.scrape(beforeRefine);
     		// update result items
     		result = findTitleWithRefineKeyword(result, textFieldKeywordRefine.getText());
@@ -348,7 +351,7 @@ public class Controller {
     		updateAllTabs();
     	}
     	
-    	refineID.setEnabled(false);
+    	refineID.setDisable(true);
     }
     
 	private static class HyperlinkCell implements  Callback<TableColumn<Item, String>, TableCell<Item, String>> {
