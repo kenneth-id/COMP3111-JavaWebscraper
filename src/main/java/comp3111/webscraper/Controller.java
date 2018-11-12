@@ -253,7 +253,7 @@ public class Controller {
     }    
     
     private void updateConsole(List<Item> result) {
-    	System.out.println("Items: \n");
+    	System.out.println("Items from Craiglist and Carousell: \n");
     	String output = "";
     	for (Item item : result) {
     		output += item.getTitle() + "\t" + item.getPrice() +	 "\t" 

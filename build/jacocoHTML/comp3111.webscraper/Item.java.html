@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Item.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">COMP3111-TKOXP</a> &gt; <a href="index.source.html" class="el_package">comp3111.webscraper</a> &gt; <span class="el_source">Item.java</span></div><h1>Item.java</h1><pre class="source lang-java linenums">package comp3111.webscraper;
+import java.time.LocalDateTime;
+import java.util.Comparator;
+
+
+<span class="fc" id="L6">public class Item  {</span>
+	private String title ; 
+	private Double price ;
+	private String url ;
+	private String origin;
+	private LocalDateTime postedDate;
+	
+	public String getTitle() {
+<span class="fc" id="L14">		return title;</span>
+	}
+	public void setTitle(String title) {
+<span class="fc" id="L17">		this.title = title;</span>
+<span class="fc" id="L18">	}</span>
+	public double getPrice() {
+<span class="nc" id="L20">		return price;</span>
+	}
+	public void setPrice(Double price) {
+<span class="nc" id="L23">		this.price = price;</span>
+<span class="nc" id="L24">	}</span>
+	public String getUrl() {
+<span class="nc" id="L26">		return url;</span>
+	}
+	public void setUrl(String url) {
+<span class="nc" id="L29">		this.url = url;</span>
+<span class="nc" id="L30">	}</span>
+	
+	/**
+	 * Helper method to get the String object, origin
+	 * @author kenneth-id
+	 * @return A String object, origin
+	 */
+	public String getOrigin() {
+<span class="nc" id="L38">		return origin;</span>
+	}
+	
+	/**
+	 * Helper method to set the String object origin 
+	 * @author kenneth-id
+	 * @param origin - String object to be set as origin of the Item 
+	 */
+	public void setOrigin(String origin) {
+<span class="nc" id="L47">		this.origin=origin;</span>
+<span class="nc" id="L48">	}</span>
+	
+	/**
+	 * Helper method to get the LocalDateTime object postedDate 
+	 * @author kenneth-id
+	 * @return LocalDateTime object posted date
+	 */
+	public LocalDateTime getPostedDate() {
+<span class="nc" id="L56">		return postedDate;</span>
+	}
+	
+	/**
+	 * Helper method to set postedDate attribute 
+	 * @author kenneth-id
+	 * @param postedDate LocalDateTime object to be set as the attribute postedDate 
+	 */
+	public void setPostedDate(LocalDateTime postedDate) {
+<span class="nc" id="L65">		this.postedDate= postedDate;</span>
+<span class="nc" id="L66">	}</span>
+	
+	/**
+	 * Helper method to get an Arraylist of Item objects from the list of lists ItemLists 
+	 * @author kenneth-id
+	 * @param index - integer that specifies the index you want to get 
+	 * @return The ArrayList of Items specified by the index, returns -1 if String is not found
+	 * @throws IndexOutOfBoundsException - if the index is out of range (index &lt; 0 || index &gt;= size())
+	 */
+	
+	/**
+	 * Comparator object to sort the result from webscraper by price ascending, if the price is the same, craiglist items are listed first 
+	 * @author kenneth-id
+	 */
+<span class="fc" id="L80">	public static Comparator&lt;Item&gt; COMPARE_BY_Price = new Comparator&lt;Item&gt;() {</span>
+        public int compare(Item one, Item other) {
+<span class="nc" id="L82">            int value1 =one.price.compareTo(other.price);</span>
+<span class="nc bnc" id="L83" title="All 2 branches missed.">            if(value1==0) {</span>
+<span class="nc" id="L84">            	int value2 = other.origin.compareTo(one.origin);</span>
+<span class="nc" id="L85">            	return value2;</span>
+            }
+            else {
+<span class="nc" id="L88">            return value1;</span>
+            }
+        }
+    };
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.1.201803210924</span></div></body></html>
