@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>WebScraper.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">COMP3111-TKOXP</a> &gt; <a href="index.source.html" class="el_package">comp3111.webscraper</a> &gt; <span class="el_source">WebScraper.java</span></div><h1>WebScraper.java</h1><pre class="source lang-java linenums">package comp3111.webscraper;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.net.URLEncoder;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.Collections;
+import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.WebResponse;
+import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
+import com.gargoylesoftware.htmlunit.html.HtmlElement;
+import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import java.util.Vector;
+
+/**
+ * Webscraper class, use it to scrape websites 
+ * @author kenneth-id
+ */
+public class WebScraper {
+
+	private static final String CRAIGLIST_DEFAULT_URL = &quot;https://newyork.craigslist.org/&quot;;
+	private static final String CAROUSELL_DEFAULT_URL = &quot;https://hk.carousell.com/&quot;;
+<span class="nc" id="L26">	private static final DateTimeFormatter craiglistFormatter = DateTimeFormatter.ofPattern(&quot;yyyy-MM-dd HH:mm&quot;);</span>
+	
+	private WebClient client;
+
+	/**
+	 * Default Constructor 
+	 */
+<span class="nc" id="L33">	public WebScraper() {</span>
+<span class="nc" id="L34">		client = new WebClient();</span>
+<span class="nc" id="L35">		client.getOptions().setCssEnabled(false);</span>
+<span class="nc" id="L36">		client.getOptions().setJavaScriptEnabled(false);	</span>
+<span class="nc" id="L37">	}</span>
+
+	/**
+	 * Main method of this class: scrape web content from Craiglist and Carousell 
+	 * 
+	 * @author kenneth-id
+	 * @param keyword - the keyword you want to search
+	 * @return A list of Item that has found. A zero size list is return if nothing is found. Null if any exception (e.g. no connectivity)
+	 */
+	public List&lt;Item&gt; scrape(String keyword) {
+
+		try {
+			
+<span class="nc" id="L50">			String searchCraiglistUrl = CRAIGLIST_DEFAULT_URL + &quot;search/sss?sort=rel&amp;query=&quot; + URLEncoder.encode(keyword, &quot;UTF-8&quot;);</span>
+<span class="nc" id="L51">			HtmlPage craiglistPage = client.getPage(searchCraiglistUrl);</span>
+<span class="nc" id="L52">			client.waitForBackgroundJavaScriptStartingBefore(50000);			</span>
+<span class="nc" id="L53">			List&lt;?&gt; craiglistItems = (List&lt;?&gt;) craiglistPage.getByXPath(&quot;//li[@class='result-row']&quot;);</span>
+<span class="nc" id="L54">			System.out.println(&quot;size of craiglistItems list= &quot; + craiglistItems.size());		</span>
+			
+<span class="nc" id="L56">			Vector&lt;Item&gt; result = new Vector&lt;Item&gt;();</span>
+			
+			//this loop is for craiglist items
+<span class="nc bnc" id="L59" title="All 2 branches missed.">			for (int i = 0; i &lt; craiglistItems.size(); i++) {</span>
+<span class="nc" id="L60">				HtmlElement htmlItem = (HtmlElement) craiglistItems.get(i);</span>
+<span class="nc" id="L61">				HtmlAnchor itemAnchor = ((HtmlAnchor) htmlItem.getFirstByXPath(&quot;.//p[@class='result-info']/a&quot;));</span>
+<span class="nc" id="L62">				HtmlElement spanPrice = ((HtmlElement) htmlItem.getFirstByXPath(&quot;.//a/span[@class='result-price']&quot;));</span>
+<span class="nc" id="L63">				HtmlElement itemPostedDate = ((HtmlElement) htmlItem.getFirstByXPath(&quot;./p/time&quot;));</span>
+				// It is possible that an item doesn't have any price, we set the price to 0.0
+				// in this case
+<span class="nc bnc" id="L66" title="All 2 branches missed.">				String itemPrice = spanPrice == null ? &quot;0.0&quot; : spanPrice.asText();</span>
+				
+<span class="nc" id="L68">				String postedDateString=itemPostedDate.getAttribute(&quot;datetime&quot;);</span>
+<span class="nc" id="L69">				LocalDateTime finalPostedDate=LocalDateTime.parse(postedDateString,craiglistFormatter);</span>
+<span class="nc" id="L70">				Item item = new Item();</span>
+<span class="nc" id="L71">				item.setTitle(itemAnchor.asText());</span>
+<span class="nc" id="L72">				item.setUrl(CRAIGLIST_DEFAULT_URL + itemAnchor.getHrefAttribute());</span>
+<span class="nc" id="L73">				item.setPostedDate(finalPostedDate);</span>
+<span class="nc" id="L74">				item.setPrice(new Double(itemPrice.replace(&quot;$&quot;, &quot;&quot;)));</span>
+<span class="nc" id="L75">				item.setOrigin(&quot;Craiglist&quot;);</span>
+
+<span class="nc" id="L77">				result.add(item);</span>
+			}
+			
+			
+<span class="nc" id="L81">			String searchCarousellUrl = CAROUSELL_DEFAULT_URL + &quot;search/products/?query=&quot; + URLEncoder.encode(keyword, &quot;UTF-8&quot;);</span>
+<span class="nc" id="L82">			HtmlPage carousellPage = client.getPage(searchCarousellUrl);</span>
+<span class="nc" id="L83">			client.waitForBackgroundJavaScriptStartingBefore(50000);</span>
+		    
+<span class="nc" id="L85">			List&lt;?&gt; carousellItems = (List&lt;?&gt;) carousellPage.getByXPath(&quot;//*[@id=\&quot;root\&quot;]/div/div[1]/div[1]/div[2]/div[2]/div[4]/div[1]/div&quot;);</span>
+<span class="nc" id="L86">			System.out.println(&quot;size of carousellItems list= &quot; + carousellItems.size());</span>
+<span class="nc bnc" id="L87" title="All 2 branches missed.">			for (int i = 0; i &lt; carousellItems.size(); i++) {</span>
+<span class="nc" id="L88">				HtmlElement htmlItem = (HtmlElement) carousellItems.get(i);</span>
+<span class="nc" id="L89">				HtmlAnchor itemAnchor = ((HtmlAnchor) htmlItem.getFirstByXPath(&quot;./div/figure/div/figcaption/a&quot;));</span>
+<span class="nc" id="L90">				HtmlElement spanPrice = ((HtmlElement) htmlItem.getFirstByXPath(&quot;./div//figure/div/figcaption/a/div[2]/div[1]&quot;));</span>
+<span class="nc" id="L91">				HtmlElement itemTitle = ((HtmlElement) htmlItem.getFirstByXPath(&quot;./div//figure/div/figcaption/a/div[1]/div&quot;));</span>
+<span class="nc" id="L92">				HtmlElement itemPostedOffset = ((HtmlElement) htmlItem.getFirstByXPath(&quot;./div/figure/div/a/div[2]/time/span&quot;));</span>
+				
+<span class="nc bnc" id="L94" title="All 8 branches missed.">				if(itemAnchor == null || spanPrice== null || itemTitle== null || itemPostedOffset == null) {</span>
+<span class="nc" id="L95">					continue;</span>
+				}
+				
+<span class="nc" id="L98">				Item item = new Item();</span>
+<span class="nc" id="L99">				String offsetString= itemPostedOffset.asText();</span>
+<span class="nc" id="L100">				LocalDateTime currentDateTime= LocalDateTime.now();</span>
+<span class="nc" id="L101">				LocalDateTime finalPostedDate=currentDateTime;</span>
+<span class="nc bnc" id="L102" title="All 2 branches missed.">				if(offsetString.contains(&quot;yesterday&quot;)) {</span>
+<span class="nc" id="L103">					finalPostedDate= currentDateTime.minusDays(1);</span>
+				}
+<span class="nc bnc" id="L105" title="All 2 branches missed.">				else if(offsetString.contains(&quot;New Carouseller&quot;)) {</span>
+<span class="nc" id="L106">					finalPostedDate=currentDateTime;</span>
+				}
+<span class="nc bnc" id="L108" title="All 2 branches missed.">				else if(offsetString.contains(&quot;last year&quot;)) {</span>
+<span class="nc" id="L109">					finalPostedDate= currentDateTime.minusYears(1);</span>
+				}
+				else {
+<span class="nc" id="L112">					String stringDigits= offsetString.replaceAll(&quot;\\D+&quot;,&quot;&quot;);</span>
+<span class="nc" id="L113">					int offsetAmount=0;</span>
+					
+<span class="nc bnc" id="L115" title="All 2 branches missed.">					if(!stringDigits.isEmpty()) {</span>
+<span class="nc" id="L116">						offsetAmount= Integer.parseInt(stringDigits);</span>
+					}
+					
+<span class="nc bnc" id="L119" title="All 2 branches missed.">					if(offsetString.contains(&quot;hours&quot;)) {</span>
+<span class="nc" id="L120">						finalPostedDate= currentDateTime.minusHours(offsetAmount);</span>
+					}
+<span class="nc bnc" id="L122" title="All 2 branches missed.">					else if(offsetString.contains(&quot;days&quot;)) {</span>
+<span class="nc" id="L123">						finalPostedDate= currentDateTime.minusDays(offsetAmount);</span>
+					}
+<span class="nc bnc" id="L125" title="All 2 branches missed.">					else if(offsetString.contains(&quot;months&quot;)) {</span>
+<span class="nc" id="L126">						finalPostedDate= currentDateTime.minusMonths(offsetAmount);</span>
+					}
+<span class="nc bnc" id="L128" title="All 2 branches missed.">					else if(offsetString.contains(&quot;years&quot;)) {</span>
+<span class="nc" id="L129">						finalPostedDate= currentDateTime.minusYears(offsetAmount);</span>
+					}
+				}
+				
+<span class="nc bnc" id="L133" title="All 2 branches missed.">				String itemPrice = spanPrice == null ? &quot;0.0&quot; : spanPrice.asText();</span>
+<span class="nc" id="L134">				itemPrice=itemPrice.replace(&quot;,&quot;, &quot;&quot;); //for commas in item price</span>
+<span class="nc" id="L135">				itemPrice=itemPrice.replace(&quot;HK$&quot;, &quot;&quot;);</span>
+<span class="nc" id="L136">				Double finalPrice= new Double(itemPrice);</span>
+<span class="nc" id="L137">				finalPrice= finalPrice/7.8; //converting HKD to USD</span>
+				
+<span class="nc" id="L139">				item.setTitle(itemTitle.asText());</span>
+<span class="nc" id="L140">				item.setUrl(CAROUSELL_DEFAULT_URL + itemAnchor.getHrefAttribute());</span>
+<span class="nc" id="L141">				item.setPrice(finalPrice);</span>
+<span class="nc" id="L142">				item.setOrigin(&quot;Carousell&quot;);</span>
+<span class="nc" id="L143">				item.setPostedDate(finalPostedDate);</span>
+<span class="nc" id="L144">				result.add(item);</span>
+			}
+<span class="nc" id="L146">			client.close();</span>
+			//sorting by price and item origin
+<span class="nc" id="L148">			Collections.sort(result,Item.COMPARE_BY_Price);</span>
+<span class="nc" id="L149">			return result;</span>
+<span class="nc" id="L150">		} catch (Exception e) {</span>
+<span class="nc" id="L151">			System.out.println(e);</span>
+		}
+<span class="nc" id="L153">		return null;</span>
+	}
+	
+	
+	/**
+	 * helper method of this class, use it for debugging purposes. 
+	 * @author kenneth-id
+	 * @param webPage - a HTMLPage you get from the .getPage function
+	 * @return .HTML file in the directory you specify. Change it because I am using my own directory there
+	 * @throws IOException when there is an error
+	 */
+	private void generateHTMLPage(HtmlPage webPage) throws IOException {
+<span class="nc" id="L165">		WebResponse response = webPage.getWebResponse();</span>
+<span class="nc" id="L166">		String content = response.getContentAsString();</span>
+<span class="nc" id="L167">		File debug= new File(&quot;/home/kenneth/git/carousell_debug.html&quot;);</span>
+<span class="nc" id="L168">		debug.createNewFile();</span>
+		
+<span class="nc bnc" id="L170" title="All 2 branches missed.">		if(!debug.exists()) { </span>
+<span class="nc" id="L171">	                debug.createNewFile();</span>
+	            }
+<span class="nc" id="L173">	    FileWriter fw = new FileWriter(debug);</span>
+<span class="nc" id="L174">	    fw.write(content);</span>
+<span class="nc" id="L175">	    fw.close();</span>
+<span class="nc" id="L176">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.1.201803210924</span></div></body></html>

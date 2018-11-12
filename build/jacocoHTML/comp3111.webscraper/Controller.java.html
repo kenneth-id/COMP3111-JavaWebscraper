@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Controller.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">COMP3111-TKOXP</a> &gt; <a href="index.source.html" class="el_package">comp3111.webscraper</a> &gt; <span class="el_source">Controller.java</span></div><h1>Controller.java</h1><pre class="source lang-java linenums">/**
+ * 
+ */
+package comp3111.webscraper;
+
+
+import javafx.fxml.FXML;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.Hyperlink;
+import javafx.scene.control.ComboBox;
+import javafx.scene.Node;
+import javafx.scene.chart.AreaChart;
+import javafx.scene.chart.XYChart;
+import javafx.scene.chart.XYChart.Data;
+import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.collections.FXCollections;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * 
+ * @author kevinw
+ *
+ *
+ * Controller class that manage GUI interaction. Please see document about JavaFX for details.
+ * 
+ */
+public class Controller {
+
+    @FXML 
+    private Label labelCount; 
+
+    @FXML 
+    private Label labelPrice; 
+
+    @FXML 
+    private Hyperlink labelMin; 
+
+    @FXML 
+    private Hyperlink labelLatest; 
+
+    @FXML
+    private TextField textFieldKeyword;
+    
+    @FXML
+    private TextArea textAreaConsole;
+    
+    @FXML
+    private AreaChart&lt;String, Number&gt; areaChartTrend;
+    
+    @FXML
+    private ComboBox&lt;String&gt; comboBoxTrend;
+    
+    private WebScraper scraper;
+    
+    private List&lt;Item&gt; result;
+    
+    private ObservableList&lt;String&gt; lastFiveSearches;
+    
+    private ArrayList&lt;List&lt;Item&gt;&gt; lastFiveResults;
+    
+    private ArrayList&lt;Trend&gt; lastFiveTrends;
+    
+    /**
+     * Default controller
+     */
+<span class="nc" id="L73">    public Controller() {</span>
+<span class="nc" id="L74">    	scraper = new WebScraper();</span>
+<span class="nc" id="L75">    	lastFiveSearches = FXCollections.observableArrayList();</span>
+<span class="nc" id="L76">    	lastFiveResults= new ArrayList&lt;List&lt;Item&gt;&gt;();</span>
+<span class="nc" id="L77">    	lastFiveTrends = new ArrayList&lt;Trend&gt;();</span>
+<span class="nc" id="L78">    }</span>
+
+    /**
+     * Default initializer. It is empty.
+     */
+    @FXML
+    private void initialize() {
+    	
+<span class="nc" id="L86">    }</span>
+    
+    /**
+     * Called when the search button is pressed.
+     */
+    @FXML
+    private void actionSearch() {
+<span class="nc" id="L93">    	String searchKeyWord =textFieldKeyword.getText();</span>
+<span class="nc" id="L94">    	System.out.println(&quot;actionSearch: &quot; + searchKeyWord);</span>
+    	
+    	
+<span class="nc" id="L97">    	comboBoxTrend.setItems(lastFiveSearches);</span>
+<span class="nc" id="L98">    	System.out.println(&quot;Begin scraping&quot;);</span>
+<span class="nc" id="L99">    	result = scraper.scrape(searchKeyWord);</span>
+<span class="nc" id="L100">    	System.out.println(&quot;Finished scraping&quot;);</span>
+<span class="nc" id="L101">    	Trend searchTrend = new Trend (result);</span>
+<span class="nc bnc" id="L102" title="All 2 branches missed.">    	if(!lastFiveSearches.contains(searchKeyWord)) {</span>
+<span class="nc" id="L103">	    	addToLastFiveResults(result);</span>
+<span class="nc" id="L104">	    	addToLastFiveTrends(searchTrend);</span>
+<span class="nc" id="L105">	    	addToLastFiveSearches(searchKeyWord);</span>
+    	}
+    	
+<span class="nc" id="L108">    	updateTrendChart(searchTrend,searchKeyWord);</span>
+    	
+<span class="nc" id="L110">    	String output = &quot;Items scraped from craiglist and carousell (Currency in USD) \n &quot;;</span>
+<span class="nc bnc" id="L111" title="All 2 branches missed.">    	for (Item item : result) {</span>
+<span class="nc" id="L112">    		output += item.getTitle() + &quot;\t&quot; + item.getPrice() +	 &quot;\t&quot; </span>
+<span class="nc" id="L113">    	+ item.getOrigin() +	 &quot;\t&quot; +item.getUrl() + &quot;\n&quot;;</span>
+<span class="nc" id="L114">    	}</span>
+<span class="nc" id="L115">    	textAreaConsole.setText(output); 	</span>
+<span class="nc" id="L116">    }</span>
+    
+    @FXML
+    /**
+	 * Called when the Value property of the combobox in the Trend tab is changed.
+	 * @author kenneth-id
+	 */
+    void trendComboBoxAction(ActionEvent event) {
+<span class="nc" id="L124">    	String comboString = comboBoxTrend.getValue();</span>
+<span class="nc" id="L125">    	System.out.println(comboString);</span>
+<span class="nc" id="L126">    	int index = lastFiveSearches.indexOf(comboString);</span>
+<span class="nc" id="L127">    	Trend comboTrend = lastFiveTrends.get(index);</span>
+<span class="nc" id="L128">    	updateTrendChart(comboTrend,comboString);</span>
+<span class="nc" id="L129">    	updateConsole(lastFiveResults.get(index));</span>
+<span class="nc" id="L130">    }</span>
+    
+    /**
+	 * Helper method to update the chart in the Trend tab 
+	 * @author kenneth-id
+	 * @param searchTrend - Trend object 
+	 * @param searchKeyWord - String of the searched keyword 
+	 */
+    private void updateTrendChart(Trend searchTrend, String searchKeyWord) {
+    	//remove previous linechart
+<span class="nc" id="L140">    	areaChartTrend.getData().clear();</span>
+<span class="nc" id="L141">    	XYChart.Series&lt;String, Number&gt; averagePricesSeries = new XYChart.Series&lt;String, Number&gt;();</span>
+<span class="nc" id="L142">    	averagePricesSeries.setName(&quot;The average selling price of the &quot; + searchKeyWord);</span>
+<span class="nc" id="L143">    	int numberOfPoints=0;</span>
+<span class="nc bnc" id="L144" title="All 2 branches missed.">    	for(int i=0; i&lt;7;i++) {</span>
+<span class="nc bnc" id="L145" title="All 2 branches missed.">    		if(!(searchTrend.getAveragePricesList().get(i).equals(0.0))) {</span>
+<span class="nc" id="L146">    		Data&lt;String,Number&gt; point =new Data&lt;String, Number&gt;(searchTrend.getDatesString().get(i), </span>
+<span class="nc" id="L147">    				searchTrend.getAveragePricesList().get(i));</span>
+<span class="nc" id="L148">    		averagePricesSeries.getData().add(point);</span>
+<span class="nc" id="L149">    		numberOfPoints++;</span>
+    		}
+    	}
+<span class="nc" id="L152">    	areaChartTrend.getData().addAll(averagePricesSeries);</span>
+<span class="nc" id="L153">    	final int numberOfPointsFinal = numberOfPoints;</span>
+    	//adding double click event handler to each point
+<span class="nc bnc" id="L155" title="All 2 branches missed.">    	for(int i=0; i&lt;numberOfPointsFinal;i++) {</span>
+<span class="nc" id="L156">    		Data&lt;String, Number&gt; currentDataPoint =areaChartTrend.getData().get(0).getData().get(i);</span>
+<span class="nc" id="L157">    		Node currentNode =  currentDataPoint.getNode();</span>
+<span class="nc" id="L158">    		currentNode.addEventHandler(MouseEvent.MOUSE_PRESSED,</span>
+<span class="nc" id="L159">        		    new EventHandler&lt;MouseEvent&gt;() {</span>
+    		        @Override 
+    		        public void handle(MouseEvent mouseEvent) {
+<span class="nc bnc" id="L162" title="All 4 branches missed.">    		                 if(mouseEvent.isPrimaryButtonDown() &amp;&amp; mouseEvent.getClickCount() == 2){</span>
+    		                	 
+<span class="nc" id="L164">    		                	 ArrayList&lt;Node&gt; bluePoints = new ArrayList&lt;Node&gt;();</span>
+<span class="nc bnc" id="L165" title="All 2 branches missed.">    		                	 for(int i=0 ; i&lt;numberOfPointsFinal ;i++) {</span>
+    		                		 
+<span class="nc" id="L167">    		                		 Node currentNode =  areaChartTrend.getData().get(0).getData().get(i).getNode();</span>
+<span class="nc bnc" id="L168" title="All 2 branches missed.">    		                		 if((currentNode.getStyle() == &quot;-fx-background-color: blue;&quot;)){</span>
+<span class="nc" id="L169">    		                			 bluePoints.add(currentNode);</span>
+        		                     }
+    		                	 }
+<span class="nc bnc" id="L172" title="All 2 branches missed.">    		                	 for(Node bluePoint : bluePoints) {</span>
+<span class="nc" id="L173">    		                		 bluePoint.setStyle(&quot;&quot;);</span>
+<span class="nc" id="L174">    		                	 }</span>
+<span class="nc bnc" id="L175" title="All 2 branches missed.">    		                	 if(!currentNode.getStyle().equals(&quot;-fx-background-color: blue;&quot;) ) {</span>
+<span class="nc" id="L176">    		                     currentNode.setStyle(&quot;-fx-background-color: blue;&quot;);</span>
+<span class="nc" id="L177">    		                     int dateIndex = searchTrend.getDateIndex(currentDataPoint.getXValue());</span>
+<span class="nc" id="L178">    		                     updateConsole(searchTrend.getItemList(dateIndex));</span>
+    		                	 }
+    		                 }
+<span class="nc" id="L181">    		         }</span>
+    		    });
+    	}
+<span class="nc" id="L184">    }</span>
+    
+    /**
+     * Called when the new button is pressed. Very dummy action - print something in the command prompt.
+     */
+    @FXML
+    private void actionNew() {
+<span class="nc" id="L191">    	System.out.println(&quot;actionNew&quot;);</span>
+<span class="nc" id="L192">    }    </span>
+    
+    private void updateConsole(List&lt;Item&gt; result) {
+<span class="nc" id="L195">    	String output = &quot;Items \n &quot;;</span>
+<span class="nc bnc" id="L196" title="All 2 branches missed.">    	for (Item item : result) {</span>
+<span class="nc" id="L197">    		output += item.getTitle() + &quot;\t&quot; + item.getPrice() +	 &quot;\t&quot; </span>
+<span class="nc" id="L198">    				+ item.getOrigin() +	 &quot;\t&quot; +item.getUrl() + &quot;\n&quot;;</span>
+<span class="nc" id="L199">    	}</span>
+<span class="nc" id="L200">    	textAreaConsole.setText(output); </span>
+<span class="nc" id="L201">    }</span>
+    
+    /**
+	 * Helper method to add a String object to the ArrayList lastFiveSearches 
+	 * @author kenneth-id
+	 * @param toAdd  String object to be added into the ArrayList 
+	 */
+    private void addToLastFiveSearches (String toAdd) {
+<span class="nc bnc" id="L209" title="All 2 branches missed.">    	if(lastFiveSearches.size()&lt;5 ) {</span>
+<span class="nc" id="L210">    		lastFiveSearches.add(toAdd);</span>
+    	}
+    	else {
+<span class="nc" id="L213">    		lastFiveSearches.remove(0);</span>
+<span class="nc" id="L214">    		lastFiveSearches.add(toAdd);</span>
+    	}
+<span class="nc" id="L216">    }</span>
+    
+    /**
+	 * Helper method to add a List of Items to the ArrayList lastFiveResults 
+	 * @author kenneth-id
+	 * @param toAdd  List of Item objects to be added into the ArrayList 
+	 */
+    private void addToLastFiveResults (List&lt;Item&gt; toAdd ) {
+<span class="nc bnc" id="L224" title="All 2 branches missed.">    	if(lastFiveSearches.size()&lt;5) {</span>
+<span class="nc" id="L225">    		lastFiveResults.add(toAdd);</span>
+    	}
+    	else {
+<span class="nc" id="L228">    		lastFiveResults.remove(0);</span>
+<span class="nc" id="L229">    		lastFiveResults.add(toAdd);</span>
+    	}
+<span class="nc" id="L231">    }</span>
+    
+    /**
+	 * Helper method to add a Trend object to the ArrayList lastFiveTrends 
+	 * @author kenneth-id
+	 * @param toAdd  Trend object to be added into the ArrayList 
+	 */
+    private void addToLastFiveTrends (Trend toAdd ) {
+<span class="nc bnc" id="L239" title="All 2 branches missed.">    	if(lastFiveSearches.size()&lt;5) {</span>
+<span class="nc" id="L240">    		lastFiveTrends.add(toAdd);</span>
+    	}
+    	else {
+<span class="nc" id="L243">    		lastFiveTrends.remove(0);</span>
+<span class="nc" id="L244">    		lastFiveTrends.add(toAdd);</span>
+    	}
+<span class="nc" id="L246">    }</span>
+    
+}
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.1.201803210924</span></div></body></html>
