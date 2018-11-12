@@ -12,10 +12,10 @@ local.properties
 .loadpath
 .recommenders
 
-build/
-!build/jacoco
-!build/jacocoHTML
-!build/reports
+build/*
+!build/jacoco/
+!build/jacocoHTML/
+!build/reports/
 
 # External tool builders
 .externalToolBuilders/
