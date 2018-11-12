@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Trend.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">COMP3111-TKOXP</a> &gt; <a href="index.source.html" class="el_package">comp3111.webscraper</a> &gt; <span class="el_source">Trend.java</span></div><h1>Trend.java</h1><pre class="source lang-java linenums">package comp3111.webscraper;
+
+import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Class to store everything you need for the chart in Trend Tab
+ * @author kenneth-id
+ */
+public class Trend {
+	private ArrayList&lt;ArrayList&lt;Item&gt;&gt; itemLists; //  6 5 4 3 2 1 0 day before
+	private ArrayList&lt;Double&gt; averagePricesList; 
+	private ArrayList&lt;String&gt; datesString;
+<span class="nc" id="L17">	private static final DateTimeFormatter displayFormatter = DateTimeFormatter.ofPattern(&quot;MM/dd/yyyy &quot;);</span>
+
+	/**
+	 * Default constructor 
+	 * @author kenneth-id
+	 * @return An uninitialized Trend object
+	 */
+<span class="nc" id="L24">	public Trend() {</span>
+<span class="nc" id="L25">	itemLists = new ArrayList&lt;ArrayList&lt;Item&gt;&gt;();</span>
+<span class="nc" id="L26">	averagePricesList = new ArrayList&lt;Double&gt;();</span>
+<span class="nc" id="L27">	datesString= new ArrayList&lt;String&gt;();</span>
+<span class="nc" id="L28">	}</span>
+	/**
+	 * Parameterized constructor 
+	 * @author kenneth-id
+	 * @return A Trend object initialized with data from a list of Items
+	 * @param result - a list of Items
+	 */
+	
+<span class="nc" id="L36">	public Trend(List&lt;Item&gt; result) {</span>
+<span class="nc" id="L37">		itemLists = new ArrayList&lt;ArrayList&lt;Item&gt;&gt;();</span>
+<span class="nc" id="L38">		averagePricesList = new ArrayList&lt;Double&gt;();</span>
+<span class="nc" id="L39">		datesString= new ArrayList&lt;String&gt;();</span>
+<span class="nc" id="L40">		setItemLists(result);</span>
+<span class="nc" id="L41">		computeAveragePricesList();</span>
+<span class="nc" id="L42">		setDatesString();</span>
+<span class="nc" id="L43">	}</span>
+	
+	/**
+	 * Helper method to initialized a Trend object with data from a list of Items
+	 * @author kenneth-id
+	 */
+	public void initializeTrend(List&lt;Item&gt; result) {
+<span class="nc" id="L50">		setItemLists(result);</span>
+<span class="nc" id="L51">		computeAveragePricesList();</span>
+<span class="nc" id="L52">		setDatesString();</span>
+<span class="nc" id="L53">	}</span>
+
+	/**
+	 * Helper method to get the index of a String in the ArrayList datesString 
+	 * @author kenneth-id
+	 * @param date - String object that you want to get the index of
+	 * @return The index of the String as an integer, returns -1 if String is not found
+	 */
+
+	public int getDateIndex(String date) {
+<span class="nc bnc" id="L63" title="All 2 branches missed.">		for(int i=0; i&lt;datesString.size() ; i++) {</span>
+<span class="nc bnc" id="L64" title="All 2 branches missed.">			if(datesString.get(i).equals(date)) {</span>
+<span class="nc" id="L65">			return i;</span>
+			}
+		}
+<span class="nc" id="L68">		return -1;</span>
+	}
+	/**
+	 * Helper method to get an Arraylist of Item objects from the list of lists ItemLists 
+	 * @author kenneth-id
+	 * @param index - integer that specifies the index you want to get 
+	 * @return The ArrayList of Items specified by the index, returns -1 if String is not found
+	 * @throws IndexOutOfBoundsException - if the index is out of range (index &lt; 0 || index &gt;= size())
+	 */
+	public ArrayList&lt;Item&gt; getItemList(int index) {
+<span class="nc" id="L78">		return itemLists.get(index);</span>
+	}
+	
+	/**
+	 * Helper method to initialize the ArrayList datesString 
+	 * @author kenneth-id
+	 */
+	public void setDatesString() {
+<span class="nc" id="L86">		String zeroDaysBeforeDate= LocalDate.now().format(displayFormatter);</span>
+<span class="nc" id="L87">		String oneDaysBeforeDate= LocalDate.now().minusDays(1).format(displayFormatter);</span>
+<span class="nc" id="L88">		String twoDaysBeforeDate= LocalDate.now().minusDays(2).format(displayFormatter);</span>
+<span class="nc" id="L89">		String threeDaysBeforeDate= LocalDate.now().minusDays(3).format(displayFormatter);</span>
+<span class="nc" id="L90">		String fourDaysBeforeDate= LocalDate.now().minusDays(4).format(displayFormatter);</span>
+<span class="nc" id="L91">		String fiveDaysBeforeDate= LocalDate.now().minusDays(5).format(displayFormatter);</span>
+<span class="nc" id="L92">		String sixDaysBeforeDate= LocalDate.now().minusDays(6).format(displayFormatter);</span>
+		
+<span class="nc" id="L94">		datesString.add(sixDaysBeforeDate);</span>
+<span class="nc" id="L95">		datesString.add(fiveDaysBeforeDate);</span>
+<span class="nc" id="L96">		datesString.add(fourDaysBeforeDate);</span>
+<span class="nc" id="L97">		datesString.add(threeDaysBeforeDate);</span>
+<span class="nc" id="L98">		datesString.add(twoDaysBeforeDate);</span>
+<span class="nc" id="L99">		datesString.add(oneDaysBeforeDate);</span>
+<span class="nc" id="L100">		datesString.add(zeroDaysBeforeDate);</span>
+<span class="nc" id="L101">	}</span>
+	
+	/**
+	 * Helper method to get the ArrayList datesString 
+	 * @author kenneth-id
+	 */
+	public ArrayList &lt;String&gt; getDatesString() {
+<span class="nc" id="L108">		return datesString;</span>
+	}
+	
+	/**
+	 * Helper method to initialize the ArrayList averagePricesList
+	 * @author kenneth-id
+	 */
+
+	public void computeAveragePricesList() { //6 5 4 3 2 1 0
+<span class="nc" id="L117">		Double zeroDaysBeforeAverage = 0.0;</span>
+<span class="nc" id="L118">		Double oneDaysBeforeAverage = 0.0;</span>
+<span class="nc" id="L119">		Double twoDaysBeforeAverage = 0.0;</span>
+<span class="nc" id="L120">		Double threeDaysBeforeAverage = 0.0;</span>
+<span class="nc" id="L121">		Double fourDaysBeforeAverage = 0.0;</span>
+<span class="nc" id="L122">		Double fiveDaysBeforeAverage = 0.0;</span>
+<span class="nc" id="L123">		Double sixDaysBeforeAverage = 0.0;</span>
+		
+<span class="nc" id="L125">		ArrayList&lt;Item&gt; sixDaysBeforeItems =itemLists.get(0);</span>
+<span class="nc" id="L126">		ArrayList&lt;Item&gt; fiveDaysBeforeItems = itemLists.get(1);</span>
+<span class="nc" id="L127">		ArrayList&lt;Item&gt; fourDaysBeforeItems = itemLists.get(2);</span>
+<span class="nc" id="L128">		ArrayList&lt;Item&gt; threeDaysBeforeItems =itemLists.get(3);</span>
+<span class="nc" id="L129">		ArrayList&lt;Item&gt; twoDaysBeforeItems = itemLists.get(4);</span>
+<span class="nc" id="L130">		ArrayList&lt;Item&gt; oneDaysBeforeItems = itemLists.get(5);</span>
+<span class="nc" id="L131">		ArrayList&lt;Item&gt; zeroDaysBeforeItems =itemLists.get(6);</span>
+		
+<span class="nc" id="L133">		zeroDaysBeforeAverage= getAveragePriceForList(zeroDaysBeforeItems);</span>
+<span class="nc" id="L134">		oneDaysBeforeAverage= getAveragePriceForList(oneDaysBeforeItems);</span>
+<span class="nc" id="L135">		twoDaysBeforeAverage= getAveragePriceForList(twoDaysBeforeItems);</span>
+<span class="nc" id="L136">		threeDaysBeforeAverage= getAveragePriceForList(threeDaysBeforeItems);</span>
+<span class="nc" id="L137">		fourDaysBeforeAverage= getAveragePriceForList(fourDaysBeforeItems);</span>
+<span class="nc" id="L138">		fiveDaysBeforeAverage= getAveragePriceForList(fiveDaysBeforeItems);</span>
+<span class="nc" id="L139">		sixDaysBeforeAverage= getAveragePriceForList(sixDaysBeforeItems);</span>
+		
+<span class="nc" id="L141">		averagePricesList.add(sixDaysBeforeAverage);</span>
+<span class="nc" id="L142">		averagePricesList.add(fiveDaysBeforeAverage);</span>
+<span class="nc" id="L143">		averagePricesList.add(fourDaysBeforeAverage);</span>
+<span class="nc" id="L144">		averagePricesList.add(threeDaysBeforeAverage);</span>
+<span class="nc" id="L145">		averagePricesList.add(twoDaysBeforeAverage);</span>
+<span class="nc" id="L146">		averagePricesList.add(oneDaysBeforeAverage);</span>
+<span class="nc" id="L147">		averagePricesList.add(zeroDaysBeforeAverage);</span>
+<span class="nc" id="L148">	}</span>
+	
+	/**
+	 * Helper method for the function computeAveragePricesList, it returns the average price of an ArrayList of Items
+	 * @author kenneth-id
+	 * @param list - an ArrayList of Items 
+	 * @return Double object which is the average of item prices in a list
+	 */
+	public Double getAveragePriceForList(ArrayList&lt;Item&gt; list) {
+<span class="nc" id="L157">		Double total =0.0;</span>
+<span class="nc" id="L158">		int divisor = 0;</span>
+<span class="nc" id="L159">		Double zero = 0.0;</span>
+<span class="nc bnc" id="L160" title="All 2 branches missed.">		for(int i=0; i&lt; list.size();i++) {</span>
+<span class="nc" id="L161">			Double itemPrice =list.get(i).getPrice();</span>
+<span class="nc bnc" id="L162" title="All 2 branches missed.">			if(!(itemPrice.equals(zero))) {</span>
+<span class="nc" id="L163">				total += itemPrice;</span>
+<span class="nc" id="L164">				divisor++;</span>
+			}
+		}
+<span class="nc bnc" id="L167" title="All 2 branches missed.">		if(divisor!= 0) {</span>
+<span class="nc" id="L168">		Double average = (Double) total/divisor;</span>
+<span class="nc" id="L169">		return average;</span>
+		}
+		else {
+<span class="nc" id="L172">			return 0.0;</span>
+		}
+	}
+	
+	/**
+	 * Helper method to get the ArrayList averagePricesList
+	 * @author kenneth-id
+	 * @return ArrayList of Double objects, averagePricesList
+	 */
+	
+	public ArrayList&lt;Double&gt; getAveragePricesList(){
+<span class="nc" id="L183">		return averagePricesList;</span>
+	}
+	
+	/**
+	 * Helper method to initialize the ArrayList itemLists
+	 * @author kenneth-id
+	 * @param result  an ArrayList of Items 
+	 */
+	public void setItemLists(List&lt;Item&gt; result) { //  6 5 4 3 2 1 0 day before
+		//initialize lists
+<span class="nc" id="L193">		ArrayList&lt;Item&gt; sixDaysBeforeItems = new ArrayList&lt;Item&gt;();</span>
+<span class="nc" id="L194">		ArrayList&lt;Item&gt; fiveDaysBeforeItems = new ArrayList&lt;Item&gt;();</span>
+<span class="nc" id="L195">		ArrayList&lt;Item&gt; fourDaysBeforeItems = new ArrayList&lt;Item&gt;();</span>
+<span class="nc" id="L196">		ArrayList&lt;Item&gt; threeDaysBeforeItems = new ArrayList&lt;Item&gt;();</span>
+<span class="nc" id="L197">		ArrayList&lt;Item&gt; twoDaysBeforeItems = new ArrayList&lt;Item&gt;();</span>
+<span class="nc" id="L198">		ArrayList&lt;Item&gt; oneDaysBeforeItems = new ArrayList&lt;Item&gt;();</span>
+<span class="nc" id="L199">		ArrayList&lt;Item&gt; zeroDaysBeforeItems = new ArrayList&lt;Item&gt;();</span>
+		
+		//initialize dates
+<span class="nc" id="L202">		LocalDate zeroDaysBeforeDate= LocalDate.now();</span>
+<span class="nc" id="L203">		LocalDate oneDaysBeforeDate= LocalDate.now().minusDays(1);</span>
+<span class="nc" id="L204">		LocalDate twoDaysBeforeDate= LocalDate.now().minusDays(2);</span>
+<span class="nc" id="L205">		LocalDate threeDaysBeforeDate= LocalDate.now().minusDays(3);</span>
+<span class="nc" id="L206">		LocalDate fourDaysBeforeDate= LocalDate.now().minusDays(4);</span>
+<span class="nc" id="L207">		LocalDate fiveDaysBeforeDate= LocalDate.now().minusDays(5);</span>
+<span class="nc" id="L208">		LocalDate sixDaysBeforeDate= LocalDate.now().minusDays(6);</span>
+		
+		//loop through all items in result
+<span class="nc bnc" id="L211" title="All 2 branches missed.">		for(int index =0; index&lt;result.size();index++) {</span>
+<span class="nc" id="L212">			LocalDate postedDate=result.get(index).getPostedDate().toLocalDate();</span>
+		
+<span class="nc bnc" id="L214" title="All 2 branches missed.">			if(postedDate.equals(zeroDaysBeforeDate)) {</span>
+<span class="nc" id="L215">				zeroDaysBeforeItems.add(result.get(index));</span>
+			}
+<span class="nc bnc" id="L217" title="All 2 branches missed.">			else if(postedDate.equals(oneDaysBeforeDate)) {</span>
+<span class="nc" id="L218">				oneDaysBeforeItems.add(result.get(index));</span>
+			}
+<span class="nc bnc" id="L220" title="All 2 branches missed.">			else if(postedDate.equals(twoDaysBeforeDate)) {</span>
+<span class="nc" id="L221">				twoDaysBeforeItems.add(result.get(index));</span>
+			}
+<span class="nc bnc" id="L223" title="All 2 branches missed.">			else if(postedDate.equals(threeDaysBeforeDate)) {</span>
+<span class="nc" id="L224">				threeDaysBeforeItems.add(result.get(index));</span>
+			}
+<span class="nc bnc" id="L226" title="All 2 branches missed.">			else if(postedDate.equals(fourDaysBeforeDate)) {</span>
+<span class="nc" id="L227">				fourDaysBeforeItems.add(result.get(index));</span>
+			}
+
+<span class="nc bnc" id="L230" title="All 2 branches missed.">			else if(postedDate.equals(fiveDaysBeforeDate)) {</span>
+<span class="nc" id="L231">				fiveDaysBeforeItems.add(result.get(index));</span>
+			}
+<span class="nc bnc" id="L233" title="All 2 branches missed.">			else if(postedDate.equals(sixDaysBeforeDate)) {</span>
+<span class="nc" id="L234">				sixDaysBeforeItems.add(result.get(index));</span>
+			}
+		}
+		
+		//add lists to array of lists in the order of 6 5 4 3 2 1 0 days before
+<span class="nc" id="L239">		itemLists.add(sixDaysBeforeItems);</span>
+<span class="nc" id="L240">		itemLists.add(fiveDaysBeforeItems);</span>
+<span class="nc" id="L241">		itemLists.add(fourDaysBeforeItems);</span>
+<span class="nc" id="L242">		itemLists.add(threeDaysBeforeItems);</span>
+<span class="nc" id="L243">		itemLists.add(twoDaysBeforeItems);</span>
+<span class="nc" id="L244">		itemLists.add(oneDaysBeforeItems);</span>
+<span class="nc" id="L245">		itemLists.add(zeroDaysBeforeItems);</span>
+<span class="nc" id="L246">	}</span>
+	
+	/**
+	 * Helper method to get the ArrayList of ArrayList filled with Item objects, itemLists
+	 * @author kenneth-id
+	 * @return ArrayList of ArrayList filled with Item objects, itemLists
+	 */
+	public ArrayList&lt;ArrayList&lt;Item&gt;&gt; getItemLists() {
+<span class="nc" id="L254">		return itemLists;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.1.201803210924</span></div></body></html>
