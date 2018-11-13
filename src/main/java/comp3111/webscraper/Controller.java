@@ -258,7 +258,7 @@ public class Controller {
 	 * @param result - the list of items to be printed
 	 */
     private void updateConsole(List<Item> result) {
-    	System.out.println("Items: \n");
+    	System.out.println("Items from Craiglist and Carousell (Price in USD)");
     	String output = "";
     	for (Item item : result) {
     		output += item.getTitle() + "\t" + item.getPrice() +	 "\t" 
