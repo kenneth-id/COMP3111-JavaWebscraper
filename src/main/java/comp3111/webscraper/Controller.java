@@ -252,6 +252,11 @@ public class Controller {
     	System.out.println("actionNew");
     }    
     
+    /**
+	 * Helper method to print on console 
+	 * @author kenneth-id, vajunaedi
+	 * @param result - the list of items to be printed
+	 */
     private void updateConsole(List<Item> result) {
     	System.out.println("Items from Craiglist and Carousell (Price in USD)");
     	String output = "";
@@ -309,6 +314,10 @@ public class Controller {
     }
     
 
+    /**
+	 * Additional method to ensure that on first click, the refine button is disabled
+	 * @author vajunaedi
+	 */
     @FXML
     private void mouseClicked() {
     	if(textAreaConsole.getText().isEmpty()) {
@@ -317,24 +326,36 @@ public class Controller {
     	}
     }
     
-    private List<Item> findTitleWithRefineKeyword(List<Item> result, String text) {
-
+    /**
+	 * Helper function for findTitleWithRefineKeyword; as an iterator iterates through the list,
+	 * it checks if a string (i.e. the item's title) contains a substring (the refine search keyword),
+	 * and it removes the item which does not contain said keyword/substring
+	 * @author vajunaedi
+	 * @param result - the list of items to check or iterate through
+	 * @param text - the keyword/substring checked 
+	 * @return A refined list of item, representing those whose title contains the specified keyword/substring
+	 */
+    public List<Item> findTitleWithRefineKeyword(List<Item> result, String text) {
 		Iterator<Item> iter = result.listIterator();
 		while(iter.hasNext()) {
-			Item item = iter.next();
+	    	Item item = iter.next();
 			if (item.getTitle().toLowerCase().contains(text.toLowerCase())==false) {    				
 				iter.remove();
 			}
 		}
-    	
     	return result;
     }
     
+
+    /**
+	 * Basic Task 5: Refine Search. 
+	 * This task can only be done if the refine search button is enabled, and when the previous search produced some results
+	 * Refine Search essentially refines a scraped list, filtering those whose titles are specified in the refine search text area
+	 * After the refine search is done, all other tabs are refreshed and updated, and the refine button is disabled.
+	 * @author vajunaedi
+	 */
     @FXML
     private void refineSearch() {
-    	//System.out.println("actionSearch: " + textFieldKeyword.getText());
-    	
-    	//if(textFieldKeyword.getText().isEmpty() && textFieldKeywordRefine.getText().isEmpty()) 
     	if(textAreaConsole.getText().isEmpty()) {
     		refineID.setDisable(true);
     		return;
@@ -342,19 +363,34 @@ public class Controller {
 
     	if(refineID.isDisabled()==false) {
     		result = scraper.scrape(beforeRefine);
-    		// update result items
+    		
+    		// Update the result lists 
     		result = findTitleWithRefineKeyword(result, textFieldKeywordRefine.getText());
     		
-	    	//textAreaConsole.setText(printConsole(result));
-	    	
+    		// Console is updated with the refined results
     		updateConsole(result);
+    		// Update all other tabs to the right of console
     		updateAllTabs();
     	}
     	
+    	// Set refine to be disabled again
     	refineID.setDisable(true);
     }
-    
+
+    /**
+	 * Helper class to define the URL TableColumn for Basic Task 4 - Table updates. 
+	 * @author vajunaedi
+	 */
 	private static class HyperlinkCell implements  Callback<TableColumn<Item, String>, TableCell<Item, String>> {
+		
+
+	    /**
+		 * This function help define the URL's table cell to be defined as Hyperlink, although it is initially stored as String.
+		 * In addition, it is handling each cell to be opened in a new browser.
+		 * @author vajunaedi
+		 * @param arg - calling the TableColumn URL
+		 * @return represnets the TableColumn that has been set into Hyperlink 
+		 */
 	    @Override
 	    public TableCell<Item, String> call(TableColumn<Item, String> arg) {
 	        TableCell<Item, String> cell = new TableCell<Item, String>() {
@@ -381,9 +417,12 @@ public class Controller {
 	    }
 	}
     
-    /** Task 4: Fill out table
-     * Called when the table tab is clicked
-     * **/
+
+    /**
+	 * Basic Task 4: Table. 
+	 * This function stored the scraped items content into a table. 
+	 * @author vajunaedi
+	 */
     @FXML
     private void updateTableTab() {
     	tableControl.setEditable(false);
