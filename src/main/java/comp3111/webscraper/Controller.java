@@ -471,7 +471,7 @@ public class Controller {
     			lowest = price;
     			lowUrl = url;
     		}
-    		System.out.println(date);
+
     		if(latest.isBefore(date)) {
     			latest = date;
     			latestUrl = url;
