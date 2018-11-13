@@ -196,7 +196,7 @@ public class Controller {
 	 * @param searchTrend - Trend object 
 	 * @param searchKeyWord - String of the searched keyword 
 	 */
-    private void updateTrendChart(Trend searchTrend, String searchKeyWord) {
+    public void updateTrendChart(Trend searchTrend, String searchKeyWord) {
     	//remove previous linechart
     	areaChartTrend.getData().clear();
     	XYChart.Series<String, Number> averagePricesSeries = new XYChart.Series<String, Number>();
@@ -273,7 +273,7 @@ public class Controller {
 	 * @author kenneth-id
 	 * @param toAdd  String object to be added into the ArrayList 
 	 */
-    private void addToLastFiveSearches (String toAdd) {
+    public void addToLastFiveSearches (String toAdd) {
     	if(lastFiveSearches.size()<5 ) {
     		lastFiveSearches.add(toAdd);
     	}
@@ -288,8 +288,8 @@ public class Controller {
 	 * @author kenneth-id
 	 * @param toAdd  List of Item objects to be added into the ArrayList 
 	 */
-    private void addToLastFiveResults (List<Item> toAdd ) {
-    	if(lastFiveSearches.size()<5) {
+    public void addToLastFiveResults (List<Item> toAdd ) {
+    	if(lastFiveResults.size()<5) {
     		lastFiveResults.add(toAdd);
     	}
     	else {
@@ -303,14 +303,41 @@ public class Controller {
 	 * @author kenneth-id
 	 * @param toAdd  Trend object to be added into the ArrayList 
 	 */
-    private void addToLastFiveTrends (Trend toAdd ) {
-    	if(lastFiveSearches.size()<5) {
+    public void addToLastFiveTrends (Trend toAdd ) {
+    	if(lastFiveTrends.size()<5) {
     		lastFiveTrends.add(toAdd);
     	}
     	else {
     		lastFiveTrends.remove(0);
     		lastFiveTrends.add(toAdd);
     	}
+    }
+    
+    /**
+	 * Helper method to get the ObservableList lastFiveSearches from the controller class 
+	 * @author kenneth-id
+	 * @return The ObservableList lastFiveSearches from the controller class 
+	 */
+    public ObservableList<String> getLastFiveSearches(){
+    	return lastFiveSearches;
+    }
+    
+    /**
+	 * Helper method to get the ArrayList lastFiveTrends from the controller class 
+	 * @author kenneth-id
+	 * @return The ArrayList of Trend object, lastFiveTrends from the controller class 
+	 */
+    public ArrayList<Trend> getLastFiveTrends(){
+    	return lastFiveTrends;
+    }
+    
+    /**
+	 * Helper method to get the ArrayList of List lastFiveResults from the controller class 
+	 * @author kenneth-id
+	 * @return The ArrayList of List filled with Item objects, lastFiveResults from the controller class 
+	 */
+    public ArrayList<List<Item>> getLastFiveResults(){
+    	return lastFiveResults;
     }
     
 

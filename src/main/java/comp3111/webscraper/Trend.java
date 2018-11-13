@@ -60,10 +60,12 @@ public class Trend {
 
 	public int getDateIndex(String date) {
 		for(int i=0; i<datesString.size() ; i++) {
+			System.out.println(i);
 			if(datesString.get(i).equals(date)) {
 			return i;
 			}
 		}
+		System.out.println("Came out of the for loop");
 		return -1;
 	}
 	/**

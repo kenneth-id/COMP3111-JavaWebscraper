@@ -1,7 +1,6 @@
 package comp3111.webscraper;
 
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -44,8 +43,18 @@ public class TrendTest {
 	@Test
 	public void testInitializeTrend() throws Exception {
 		Trend test = new Trend();
+		result= scraper.scrape("abcde");
 		test.initializeTrend(result);
 		assertNotNull(test);
+	}
+	@Test
+	public void testGetDateIndexValid() throws Exception {
+		assertEquals(3,trend.getDateIndex(trend.getDatesString().get(3)));
+	}
+	// Im not sure if this one is stable yet.
+	@Test
+	public void testGetDateIndexNotValid() throws Exception {
+		assertEquals(-1,trend.getDateIndex("random"));
 	}
 	
 	@Test
