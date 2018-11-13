@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="comp3111.webscraper.TrendTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2018-11-13T05:21:34" hostname="kenneth-XPS-13" time="25.159">
+  <properties/>
+  <testcase name="testGetItemList" classname="comp3111.webscraper.TrendTest" time="9.178"/>
+  <testcase name="parameterizedConstructor" classname="comp3111.webscraper.TrendTest" time="5.0"/>
+  <testcase name="testGetDatesString" classname="comp3111.webscraper.TrendTest" time="3.526"/>
+  <testcase name="testInitializeTrend" classname="comp3111.webscraper.TrendTest" time="3.761"/>
+  <testcase name="testDefaultConstructor" classname="comp3111.webscraper.TrendTest" time="3.694"/>
+  <system-out><![CDATA[size of craiglistItems list= 120
+size of carousellItems list= 40
+size of craiglistItems list= 120
+size of carousellItems list= 40
+size of craiglistItems list= 120
+size of carousellItems list= 40
+size of craiglistItems list= 120
+size of carousellItems list= 40
+size of craiglistItems list= 120
+size of carousellItems list= 40
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

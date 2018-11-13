@@ -109,6 +109,9 @@ public class WebScraper {
 				else if(offsetString.contains("last year")) {
 					finalPostedDate= currentDateTime.minusYears(1);
 				}
+				else if(offsetString.contains("last month")) {
+					finalPostedDate= currentDateTime.minusMonths(1);
+				}
 				else {
 					String stringDigits= offsetString.replaceAll("\\D+","");
 					int offsetAmount=0;
