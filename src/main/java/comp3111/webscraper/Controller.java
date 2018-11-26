@@ -106,7 +106,7 @@ public class Controller {
     private TableColumn<Item, LocalDateTime> postedDate;
     
     @FXML
-    private Button refineID;
+    public Button refineID;
 
     @FXML
     private Button goID;
@@ -252,17 +252,22 @@ public class Controller {
     	System.out.println("actionNew");
     }    
     
+    public String printItemAttributes(Item item) {
+    	String output = "";
+    	output = item.getTitle() + "\t" + item.getPrice() +	 "\t" + item.getOrigin() + "\t" +item.getUrl() + "\n";
+    	return output;
+    }
+    
     /**
 	 * Helper method to print on console 
 	 * @author kenneth-id, vajunaedi
 	 * @param result - the list of items to be printed
 	 */
-    private void updateConsole(List<Item> result) {
+    public void updateConsole(List<Item> result) {
     	System.out.println("Items from Craiglist and Carousell (Price in USD)");
     	String output = "";
     	for (Item item : result) {
-    		output += item.getTitle() + "\t" + item.getPrice() +	 "\t" 
-    				+ item.getOrigin() +	 "\t" +item.getUrl() + "\n";
+    		output += printItemAttributes(item);
     	}
     	
     	textAreaConsole.setText(output);
@@ -355,7 +360,7 @@ public class Controller {
 	 * @author vajunaedi
 	 */
     @FXML
-    private void refineSearch() {
+    public void refineSearch() {
     	if(textAreaConsole.getText().isEmpty()) {
     		refineID.setDisable(true);
     		return;
@@ -416,7 +421,6 @@ public class Controller {
 	        return cell;
 	    }
 	}
-    
 
     /**
 	 * Basic Task 4: Table. 
