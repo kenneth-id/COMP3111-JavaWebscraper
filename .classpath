@@ -24,5 +24,8 @@
 		</accessrules>
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.buildship.core.gradleclasspathcontainer"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/5"/>
+	<classpathentry kind="lib" path="C:/Users/VictoriaAmanda/Documents/testfx-junit-4.0.15-alpha.jar"/>
+	<classpathentry kind="lib" path="C:/Users/VictoriaAmanda/Documents/testfx-core-4.0.15-alpha.jar"/>
 	<classpathentry kind="output" path="bin/default"/>
 </classpath>
