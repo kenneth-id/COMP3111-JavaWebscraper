@@ -80,7 +80,6 @@ public class ControllerTest {
 		Item item = createDummyItem("Craigslist", 0.0, "Dummy item for test", LocalDateTime.now());
 		List<Item> itemTest = new ArrayList<Item>();
 		itemTest.add(item);
-		Controller c = new Controller();
 		
 		Iterator<Item> iter = itemTest.listIterator();
 				
@@ -92,7 +91,6 @@ public class ControllerTest {
 		Item item = createDummyItem("Craigslist", 0.0, "Dummy item for test", LocalDateTime.now());
 		List<Item> itemTest = new ArrayList<Item>();
 		itemTest.add(item);
-		Controller c = new Controller();
 	
 		itemTest = c.findTitleWithRefineKeyword(itemTest, "Dummy");
 				
@@ -116,12 +114,9 @@ public class ControllerTest {
 		Item item = createDummyItem("Craigslist", 0.0, "Dummy item for test", LocalDateTime.now());
 		List<Item> itemTest = new ArrayList<Item>();
 		itemTest.add(item);
-		Controller c = new Controller();
 	
 		itemTest = c.findTitleWithRefineKeyword(itemTest, "randomText");
-		
-		//c.refineSearch();
-		
+				
 		assertEquals(itemTest.isEmpty(), true);
 	}
 	
@@ -130,13 +125,11 @@ public class ControllerTest {
 		Item item = createDummyItem("Craigslist", 0.0, "Dummy item for test", LocalDateTime.now());
 		List<Item> itemTest = new ArrayList<Item>();
 		itemTest.add(item);
-		Controller c = new Controller();
 		
 		String output = "";
 		String output2 = "";
 		for(Item i : itemTest) {
 			output += i.getTitle() + "\t" + i.getPrice() +	 "\t" + i.getOrigin() + "\t" +i.getUrl() + "\n";
-			
 			output2 = c.printItemAttributes(i);
 		}
 		
