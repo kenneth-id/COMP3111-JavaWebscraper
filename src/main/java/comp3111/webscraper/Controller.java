@@ -45,7 +45,7 @@ import javafx.collections.FXCollections;
 import javafx.scene.control.cell.PropertyValueFactory;
 
 import java.time.LocalDateTime;
-
+import java.time.format.DateTimeFormatter;
 /**
  * 
  * @author kevinw
@@ -170,10 +170,12 @@ public class Controller {
 //    	textAreaConsole.setText(output);
     	
     	updateConsole(result);
-
+    	
     	beforeRefine = textFieldKeyword.getText();
     	refineID.setDisable(false);
     	updateAllTabs();
+    	
+    	setSummary(result);
     }
     
     @FXML
@@ -469,5 +471,84 @@ public class Controller {
     	tableControl.getColumns().setAll(title,price,url,postedDate);
     
     }
+    
+    private void setSummary(List<Item> result) {
+    	
+    	int count = 0;
+    	int priceSum = 0;
+    	
+    	double lowest = Double.POSITIVE_INFINITY;
+    	String lowUrl = "";
+    	
+    	LocalDateTime latest = LocalDateTime.MIN;
+    	String latestUrl = "";
+    	
+    	
+    	for (Item item : result) {
+    		
+    		double price = item.getPrice();
+    		LocalDateTime  date = item.getPostedDate();
+    		String url = item.getUrl();
+    		
+    		if(price == 0) {
+    			continue;
+    		}
+    			
+    		if(lowest > price) {
+    			lowest = price;
+    			lowUrl = url;
+    		}
+
+    		if(latest.isBefore(date)) {
+    			latest = date;
+    			latestUrl = url;
+    		}
+    		
+    		priceSum += price;
+    		count++;
+    	}
+    	
+    	double avg = priceSum / count;
+    	
+    	labelCount.setText(String.valueOf(result.size()));
+    	labelPrice.setText(String.valueOf(avg));
+    	labelMin.setText(String.valueOf(lowest));
+    	
+    	final String url1 = lowUrl;
+    	
+    	labelMin.setOnAction(new EventHandler<ActionEvent>() {
+    	    @Override
+    	    public void handle(ActionEvent e) {
+    	    	
+    	    	popUpLink(url1);
+    	    }
+    	});
+    	
+    	labelLatest.setText(String.valueOf(latest.format(DateTimeFormatter.ofPattern("dd MMM yyyy HH:mm"))));
+    	
+    	final String url2 = latestUrl;
+    	
+    	labelLatest.setOnAction(new EventHandler<ActionEvent>() {
+    	    @Override
+    	    public void handle(ActionEvent e) {
+    	    	
+    	    	popUpLink(url2);
+    	    	
+    	    }
+    	});
+    	
+    }
+    
+    private void popUpLink(String link) {
+    	Desktop d = Desktop.getDesktop();
+    	URI u = URI.create(link);
+    	
+    	try {
+			d.browse(u);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+    }
+    
 }
 

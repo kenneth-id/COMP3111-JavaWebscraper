@@ -49,34 +49,61 @@ public class WebScraper {
 			
 			String searchCraiglistUrl = CRAIGLIST_DEFAULT_URL + "search/sss?sort=rel&query=" + URLEncoder.encode(keyword, "UTF-8");
 			HtmlPage craiglistPage = client.getPage(searchCraiglistUrl);
-			client.waitForBackgroundJavaScriptStartingBefore(50000);			
-			List<?> craiglistItems = (List<?>) craiglistPage.getByXPath("//li[@class='result-row']");
-			System.out.println("size of craiglistItems list= " + craiglistItems.size());		
+			client.waitForBackgroundJavaScriptStartingBefore(50000);
+			
+			HtmlElement totalCount = (HtmlElement)craiglistPage.getFirstByXPath("//span[@class='totalcount']");
+			
+			int numOfPage = (int) Math.ceil(Integer.parseInt(totalCount.asText()) / 120.0);
+			
+			if(numOfPage > 5)
+				numOfPage = 5;
+			
+			System.out.println(totalCount.asText());	
 			
 			Vector<Item> result = new Vector<Item>();
 			
-			//this loop is for craiglist items
-			for (int i = 0; i < craiglistItems.size(); i++) {
-				HtmlElement htmlItem = (HtmlElement) craiglistItems.get(i);
-				HtmlAnchor itemAnchor = ((HtmlAnchor) htmlItem.getFirstByXPath(".//p[@class='result-info']/a"));
-				HtmlElement spanPrice = ((HtmlElement) htmlItem.getFirstByXPath(".//a/span[@class='result-price']"));
-				HtmlElement itemPostedDate = ((HtmlElement) htmlItem.getFirstByXPath("./p/time"));
-				// It is possible that an item doesn't have any price, we set the price to 0.0
-				// in this case
-				String itemPrice = spanPrice == null ? "0.0" : spanPrice.asText();
+			int itemCount = 0;
+			
+			for (int j=0; j < numOfPage; j++) {
 				
-				String postedDateString=itemPostedDate.getAttribute("datetime");
-				LocalDateTime finalPostedDate=LocalDateTime.parse(postedDateString,craiglistFormatter);
-				Item item = new Item();
-				item.setTitle(itemAnchor.asText());
-//				item.setUrl(CRAIGLIST_DEFAULT_URL + itemAnchor.getHrefAttribute());
-				item.setUrl(itemAnchor.getHrefAttribute());
-				item.setPostedDate(finalPostedDate);
-				item.setPrice(new Double(itemPrice.replace("$", "")));
-				item.setOrigin("Craiglist");
+				
+				System.out.println("Scraping Page #"+ (j+1) + "...");
+				String searchCraiglistUrlPage = CRAIGLIST_DEFAULT_URL + "search/sss?sort=rel&query=" + URLEncoder.encode(keyword, "UTF-8") + "&s=" + 120*j;
+				HtmlPage cPage = client.getPage(searchCraiglistUrlPage);
+				client.waitForBackgroundJavaScriptStartingBefore(50000);
+				
+				List<?> items = (List<?>) cPage.getByXPath("//li[@class='result-row']");
+				
+				for (int i = 0; i < items.size(); i++) {
+					HtmlElement htmlItem = (HtmlElement) items.get(i);
+					HtmlAnchor itemAnchor = ((HtmlAnchor) htmlItem.getFirstByXPath(".//p[@class='result-info']/a"));
+					HtmlElement spanPrice = ((HtmlElement) htmlItem.getFirstByXPath(".//a/span[@class='result-price']"));
+					HtmlElement itemPostedDate = ((HtmlElement) htmlItem.getFirstByXPath("./p/time"));
+					// It is possible that an item doesn't have any price, we set the price to 0.0
+					// in this case
+					String itemPrice = spanPrice == null ? "0.0" : spanPrice.asText();
+					
+					String postedDateString=itemPostedDate.getAttribute("datetime");
+					LocalDateTime finalPostedDate=LocalDateTime.parse(postedDateString,craiglistFormatter);
+					Item item = new Item();
+					item.setTitle(itemAnchor.asText());
+//					item.setUrl(CRAIGLIST_DEFAULT_URL + itemAnchor.getHrefAttribute());
+					item.setUrl(itemAnchor.getHrefAttribute());
+					item.setPostedDate(finalPostedDate);
+					item.setPrice(new Double(itemPrice.replace("$", "")));
+					item.setOrigin("Craiglist");
 
-				result.add(item);
+					result.add(item);
+					
+					itemCount++;
+				}
+				
+				System.out.println("size of item in page #" + (j+1) +": " + items.size() + "\n");
+				
 			}
+			
+			System.out.println("total size of craiglistItems list= " + itemCount + "\n");
+			
 			
 			
 			String searchCarousellUrl = CAROUSELL_DEFAULT_URL + "/search/products/?query=" + URLEncoder.encode(keyword, "UTF-8");
@@ -178,5 +205,6 @@ public class WebScraper {
 //	    fw.write(content);
 //	    fw.close();
 	}
+	
 
 }
