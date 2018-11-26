@@ -46,6 +46,15 @@ public class TrendTest {
 		test.initializeTrend(result);
 		assertNotNull(test);
 	}
+	@Test
+	public void testGetDateIndexValid() throws Exception {
+		assertEquals(3,trend.getDateIndex(trend.getDatesString().get(3)));
+	}
+	// Im not sure if this one is stable yet.
+	@Test
+	public void testGetDateIndexNotValid() throws Exception {
+		assertEquals(-1,trend.getDateIndex("random"));
+	}
 	
 	@Test
 	public void testGetItemList() throws Exception{
