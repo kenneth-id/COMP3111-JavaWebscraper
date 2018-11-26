@@ -4,6 +4,7 @@ package comp3111.webscraper;
 import static org.junit.Assert.*;
 
 import java.time.LocalDateTime;
+import org.junit.BeforeClass;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -12,13 +13,23 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.gargoylesoftware.htmlunit.javascript.host.Console;
+
 public class ControllerTest {
 	
 	private Controller c;
+	static List<Item> result;
+	private static WebScraper scraper;
 	
 	@Before
 	public void setUp() {
 		c = new Controller ();
+	}
+	
+	@BeforeClass
+	public static void setUpSearchResult() {
+		scraper = new WebScraper();
+		result = scraper.scrape("watch");
 	}
 	
 	@Test
@@ -39,8 +50,6 @@ public class ControllerTest {
 	
 	@Test
 	public void testAddToLastFiveResults() throws Exception{
-		WebScraper scraper = new WebScraper();
-		List<Item> result = scraper.scrape("shoe");
 		for(int i=0;i<6;i++) {
 			c.addToLastFiveResults(result);
 		}
@@ -49,8 +58,6 @@ public class ControllerTest {
 	
 	@Test
 	public void testAddToLastFiveTrends() throws Exception{
-		WebScraper scraper = new WebScraper();
-		List<Item> result = scraper.scrape("shoe");
 		Trend trend = new Trend(result);
 		for(int i=0;i<6;i++) {
 			c.addToLastFiveTrends(trend);
@@ -115,11 +122,43 @@ public class ControllerTest {
 		assertEquals(itemTest.isEmpty(), true);
 	}
 	
+	@Test
+	public void testSummary() {
+		
+		//cheapest item
+		Item item1 = createDummyItem("Craigslist", 10.0, "Dummy item for test 1", LocalDateTime.MIN);
+		item1.setUrl("http://www.google.com");
+		
+		Item item2 = createDummyItem("Craigslist", 12.0, "Dummy item for test 2", LocalDateTime.MIN);
+		
+		//latest item
+		Item item3 = createDummyItem("Craigslist", 14.0, "Dummy item for test 3", LocalDateTime.now());
+		item3.setUrl("http://www.yahoo.com");
+		
+		Item item4 = createDummyItem("Craigslist", 16.0, "Dummy item for test 4", LocalDateTime.MIN);
+		
+		List<Item> itemsTest = new ArrayList<Item>();
+		
+		itemsTest.add(item1);
+		itemsTest.add(item2);
+		itemsTest.add(item3);
+		itemsTest.add(item4);
+		
+		c.getSummaryData(itemsTest);
+		
+		assertEquals(c.average, "13.0");
+		assertEquals(c.latestUrl, "http://www.yahoo.com");
+		assertEquals(c.lowUrl, "http://www.google.com");
+		assertEquals(c.min, "10.0");
+		assertEquals(c.totalcount, "4");
+	}
+	
 	@After
 	public void tearDown() throws Exception{
 		c =null;
 	}
-//	
+
+	
 //	@Test
 //	public void checkHelper_checkTitle() {
 //		Item item = createDummyItem("Craigslist", 0.0, "Dummy item for test", LocalDateTime.now());
