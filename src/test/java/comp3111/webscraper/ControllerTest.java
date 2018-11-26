@@ -7,6 +7,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 //import org.testfx.framework.junit.ApplicationTest;
 //
@@ -18,6 +21,50 @@ import org.junit.Test;
 
 
 public class ControllerTest {
+	
+	private Controller c;
+	
+	@Before
+	public void setUp() {
+		c = new Controller ();
+	}
+	
+	@Test
+	public void testDefaultConstructor()throws Exception {
+		assertNotNull(c);
+	}
+	
+	@Test
+	public void testAddToLastFiveSearches() throws Exception{
+		c.addToLastFiveSearches("1");
+		c.addToLastFiveSearches("2");
+		c.addToLastFiveSearches("3");
+		c.addToLastFiveSearches("4");
+		c.addToLastFiveSearches("5");
+		c.addToLastFiveSearches("6");
+		assertEquals(5,c.getLastFiveSearches().size());		
+	}
+	
+	@Test
+	public void testAddToLastFiveResults() throws Exception{
+		WebScraper scraper = new WebScraper();
+		List<Item> result = scraper.scrape("shoe");
+		for(int i=0;i<6;i++) {
+			c.addToLastFiveResults(result);
+		}
+		assertEquals(5,c.getLastFiveResults().size());	
+	}
+	
+	@Test
+	public void testAddToLastFiveTrends() throws Exception{
+		WebScraper scraper = new WebScraper();
+		List<Item> result = scraper.scrape("shoe");
+		Trend trend = new Trend(result);
+		for(int i=0;i<6;i++) {
+			c.addToLastFiveTrends(trend);
+		}
+		assertEquals(5,c.getLastFiveTrends().size());
+	}
 
 	public Item createDummyItem(String origin, double price, String title, LocalDateTime time) {
 		Item item = new Item();
@@ -96,6 +143,10 @@ public class ControllerTest {
 		assertEquals(output,output2);
 	}
 	
+	@After
+	public void tearDown() throws Exception{
+		c =null;
+	}
 //	
 //	@Test
 //	public void checkHelper_checkTitle() {
@@ -110,5 +161,4 @@ public class ControllerTest {
 //		assertEquals(itemTest.isEmpty(), false);
 //	}
 //	
-
 }

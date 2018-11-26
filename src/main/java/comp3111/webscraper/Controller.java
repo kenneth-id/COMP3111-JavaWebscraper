@@ -39,12 +39,12 @@ import java.awt.*;
 
 import javafx.application.HostServices;
 
-
 import javafx.util.Callback;
 import javafx.collections.FXCollections;
 import javafx.scene.control.cell.PropertyValueFactory;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 /**
  * 
@@ -170,10 +170,13 @@ public class Controller {
 //    	textAreaConsole.setText(output);
     	
     	updateConsole(result);
-
+    	
     	beforeRefine = textFieldKeyword.getText();
     	refineID.setDisable(false);
+    	
     	updateAllTabs();
+    	
+    	setSummary(result);
     }
     
     @FXML
@@ -196,7 +199,7 @@ public class Controller {
 	 * @param searchTrend - Trend object 
 	 * @param searchKeyWord - String of the searched keyword 
 	 */
-    private void updateTrendChart(Trend searchTrend, String searchKeyWord) {
+    public void updateTrendChart(Trend searchTrend, String searchKeyWord) {
     	//remove previous linechart
     	areaChartTrend.getData().clear();
     	XYChart.Series<String, Number> averagePricesSeries = new XYChart.Series<String, Number>();
@@ -252,6 +255,84 @@ public class Controller {
     	System.out.println("actionNew");
     }    
     
+    /**
+	 * Helper method to add a String object to the ArrayList lastFiveSearches 
+	 * @author kenneth-id
+	 * @param toAdd  String object to be added into the ArrayList 
+	 */
+    public void addToLastFiveSearches (String toAdd) {
+    	if(lastFiveSearches.size()<5 ) {
+    		lastFiveSearches.add(toAdd);
+    	}
+    	else {
+    		lastFiveSearches.remove(0);
+    		lastFiveSearches.add(toAdd);
+    	}
+    }
+    
+    /**
+	 * Helper method to add a List of Items to the ArrayList lastFiveResults 
+	 * @author kenneth-id
+	 * @param toAdd  List of Item objects to be added into the ArrayList 
+	 */
+    public void addToLastFiveResults (List<Item> toAdd ) {
+    	if(lastFiveResults.size()<5) {
+    		lastFiveResults.add(toAdd);
+    	}
+    	else {
+    		lastFiveResults.remove(0);
+    		lastFiveResults.add(toAdd);
+    	}
+    }
+    
+    /**
+	 * Helper method to add a Trend object to the ArrayList lastFiveTrends 
+	 * @author kenneth-id
+	 * @param toAdd  Trend object to be added into the ArrayList 
+	 */
+    public void addToLastFiveTrends (Trend toAdd ) {
+    	if(lastFiveTrends.size()<5) {
+    		lastFiveTrends.add(toAdd);
+    	}
+    	else {
+    		lastFiveTrends.remove(0);
+    		lastFiveTrends.add(toAdd);
+    	}
+    }
+    
+    /**
+	 * Helper method to get the ObservableList lastFiveSearches from the controller class 
+	 * @author kenneth-id
+	 * @return The ObservableList lastFiveSearches from the controller class 
+	 */
+    public ObservableList<String> getLastFiveSearches(){
+    	return lastFiveSearches;
+    }
+    
+    /**
+	 * Helper method to get the ArrayList lastFiveTrends from the controller class 
+	 * @author kenneth-id
+	 * @return The ArrayList of Trend object, lastFiveTrends from the controller class 
+	 */
+    public ArrayList<Trend> getLastFiveTrends(){
+    	return lastFiveTrends;
+    }
+    
+    /**
+	 * Helper method to get the ArrayList of List lastFiveResults from the controller class 
+	 * @author kenneth-id
+	 * @return The ArrayList of List filled with Item objects, lastFiveResults from the controller class 
+	 */
+    public ArrayList<List<Item>> getLastFiveResults(){
+    	return lastFiveResults;
+    }
+   
+    /**
+	 * Helper method to print on console 
+	 * @author vajunaedi
+	 * @return item's string
+	 * @param the Item to be converted into String
+	 */ 
     public String printItemAttributes(Item item) {
     	String output = "";
     	output = item.getTitle() + "\t" + item.getPrice() +	 "\t" + item.getOrigin() + "\t" +item.getUrl() + "\n";
@@ -271,51 +352,6 @@ public class Controller {
     	}
     	
     	textAreaConsole.setText(output);
-    }
-    
-    /**
-	 * Helper method to add a String object to the ArrayList lastFiveSearches 
-	 * @author kenneth-id
-	 * @param toAdd  String object to be added into the ArrayList 
-	 */
-    private void addToLastFiveSearches (String toAdd) {
-    	if(lastFiveSearches.size()<5 ) {
-    		lastFiveSearches.add(toAdd);
-    	}
-    	else {
-    		lastFiveSearches.remove(0);
-    		lastFiveSearches.add(toAdd);
-    	}
-    }
-    
-    /**
-	 * Helper method to add a List of Items to the ArrayList lastFiveResults 
-	 * @author kenneth-id
-	 * @param toAdd  List of Item objects to be added into the ArrayList 
-	 */
-    private void addToLastFiveResults (List<Item> toAdd ) {
-    	if(lastFiveSearches.size()<5) {
-    		lastFiveResults.add(toAdd);
-    	}
-    	else {
-    		lastFiveResults.remove(0);
-    		lastFiveResults.add(toAdd);
-    	}
-    }
-    
-    /**
-	 * Helper method to add a Trend object to the ArrayList lastFiveTrends 
-	 * @author kenneth-id
-	 * @param toAdd  Trend object to be added into the ArrayList 
-	 */
-    private void addToLastFiveTrends (Trend toAdd ) {
-    	if(lastFiveSearches.size()<5) {
-    		lastFiveTrends.add(toAdd);
-    	}
-    	else {
-    		lastFiveTrends.remove(0);
-    		lastFiveTrends.add(toAdd);
-    	}
     }
     
 
@@ -444,7 +480,85 @@ public class Controller {
     	
     	// Set all columns with data
     	tableControl.getColumns().setAll(title,price,url,postedDate);
+  
+    }
+    
+    private void setSummary(List<Item> result) {
+    	
+    	int count = 0;
+    	int priceSum = 0;
+    	
+    	double lowest = Double.POSITIVE_INFINITY;
+    	String lowUrl = "";
+    	
+    	LocalDateTime latest = LocalDateTime.MIN;
+    	String latestUrl = "";
+    	
+    	
+    	for (Item item : result) {
+    		
+    		double price = item.getPrice();
+    		LocalDateTime  date = item.getPostedDate();
+    		String url = item.getUrl();
+    		
+    		if(price == 0) {
+    			continue;
+    		}
+    			
+    		if(lowest > price) {
+    			lowest = price;
+    			lowUrl = url;
+    		}
+
+    		if(latest.isBefore(date)) {
+    			latest = date;
+    			latestUrl = url;
+    		}
+    		
+    		priceSum += price;
+    		count++;
+    	}
+    	
+    	double avg = priceSum / count;
+    	
+    	labelCount.setText(String.valueOf(result.size()));
+    	labelPrice.setText(String.valueOf(avg));
+    	labelMin.setText(String.valueOf(lowest));
+    	
+    	final String url1 = lowUrl;
+    	
+    	labelMin.setOnAction(new EventHandler<ActionEvent>() {
+    	    @Override
+    	    public void handle(ActionEvent e) {
+    	    	
+    	    	popUpLink(url1);
+    	    }
+    	});
+    	
+    	labelLatest.setText(String.valueOf(latest.format(DateTimeFormatter.ofPattern("dd MMM yyyy HH:mm"))));
+    	
+    	final String url2 = latestUrl;
+    	
+    	labelLatest.setOnAction(new EventHandler<ActionEvent>() {
+    	    @Override
+    	    public void handle(ActionEvent e) {
+    	    	
+    	    	popUpLink(url2);
+    	    	
+    	    }
+    	});
+    	
+    }
+    
+    private void popUpLink(String link) {
+    	Desktop d = Desktop.getDesktop();
+    	URI u = URI.create(link);
+    	
+    	try {
+			d.browse(u);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
     
     }
 }
-
