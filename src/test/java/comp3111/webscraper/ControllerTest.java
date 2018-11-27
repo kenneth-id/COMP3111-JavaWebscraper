@@ -25,6 +25,15 @@ public class ControllerTest {
 	private Controller c;
 	static List<Item> result;
 	private static WebScraper scraper;
+
+	public Item createDummyItem(String origin, double price, String title, LocalDateTime time) {
+		Item item = new Item();
+		item.setOrigin(origin);
+		item.setPostedDate(time);
+		item.setPrice(price);
+		item.setTitle(title);
+		return item;
+	}
 	
 	@Before
 	public void setUp() {
@@ -70,21 +79,13 @@ public class ControllerTest {
 		assertEquals(5,c.getLastFiveTrends().size());
 	}
 
-	public Item createDummyItem(String origin, double price, String title, LocalDateTime time) {
-		Item item = new Item();
-		item.setOrigin(origin);
-		item.setPostedDate(time);
-		item.setPrice(price);
-		item.setTitle(title);
-		return item;
-	}
 	
 	@Test
 	public void checkHelper_hasNextItem() throws Exception {
 		Item item = createDummyItem("Craigslist", 0.0, "Dummy item for test", LocalDateTime.now());
 		List<Item> itemTest = new ArrayList<Item>();
 		itemTest.add(item);
-		Controller c = new Controller();
+		//Controller c = new Controller();
 		
 		Iterator<Item> iter = itemTest.listIterator();
 				
@@ -96,7 +97,7 @@ public class ControllerTest {
 		Item item = createDummyItem("Craigslist", 0.0, "Dummy item for test", LocalDateTime.now());
 		List<Item> itemTest = new ArrayList<Item>();
 		itemTest.add(item);
-		Controller c = new Controller();
+		//Controller c = new Controller();
 	
 		itemTest = c.findTitleWithRefineKeyword(itemTest, "Dummy");
 				
@@ -120,7 +121,7 @@ public class ControllerTest {
 		Item item = createDummyItem("Craigslist", 0.0, "Dummy item for test", LocalDateTime.now());
 		List<Item> itemTest = new ArrayList<Item>();
 		itemTest.add(item);
-		Controller c = new Controller();
+		//Controller c = new Controller();
 	
 		itemTest = c.findTitleWithRefineKeyword(itemTest, "randomText");
 		
@@ -165,7 +166,6 @@ public class ControllerTest {
 		Item item = createDummyItem("Craigslist", 0.0, "Dummy item for test", LocalDateTime.now());
 		List<Item> itemTest = new ArrayList<Item>();
 		itemTest.add(item);
-		Controller c = new Controller();
 		
 		String output = "";
 		String output2 = "";
@@ -178,6 +178,19 @@ public class ControllerTest {
 		assertEquals(output,output2);
 	}
 	
+//	@Test
+//	public void checkUpdateConsoleMainFunction() throws Exception {
+//		Item item1 = createDummyItem("Craigslist", 0.0, "Dummy item 1 for test", LocalDateTime.now());
+//		Item item2 = createDummyItem("Craigslist", 0.0, "Dummy item 2 for test", LocalDateTime.now());
+//
+//		List<Item> itemTest = new ArrayList<Item>();
+//		itemTest.add(item1);
+//		itemTest.add(item2);
+//		
+//		c.updateConsole(itemTest);
+//		
+//		assertNotNull(itemTest);
+//	}
 
 	@After
 	public void tearDown() throws Exception{

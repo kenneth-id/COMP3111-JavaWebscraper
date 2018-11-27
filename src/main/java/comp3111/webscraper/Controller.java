@@ -433,13 +433,12 @@ public class Controller {
 	 */
 	private static class HyperlinkCell implements  Callback<TableColumn<Item, String>, TableCell<Item, String>> {
 		
-
 	    /**
 		 * This function help define the URL's table cell to be defined as Hyperlink, although it is initially stored as String.
 		 * In addition, it is handling each cell to be opened in a new browser.
 		 * @author vajunaedi
 		 * @param arg - calling the TableColumn URL
-		 * @return represnets the TableColumn that has been set into Hyperlink 
+		 * @return represents the TableColumn that has been set into Hyperlink 
 		 */
 	    @Override
 	    public TableCell<Item, String> call(TableColumn<Item, String> arg) {
