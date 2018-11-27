@@ -140,11 +140,14 @@ public class Controller {
      */
     @FXML
     private void initialize() {
-    	//refineID.setDisable(true); // set refine button to disable on construction
+    	refineID.setDisable(true); // set refine button to disable on construction
 
     }
 
-    private void updateAllTabs() {
+    /**
+     * Updates all tabs whenever a search or refine search is called.
+     */
+    public void updateAllTabs() {
     	updateTableTab();
     	setSummaryTab();
     }
@@ -359,7 +362,6 @@ public class Controller {
     	for (Item item : result) {
     		output += printItemAttributes(item);
     	}
-    	
     	textAreaConsole.setText(output);
     }
     
@@ -368,13 +370,13 @@ public class Controller {
 	 * Additional method to ensure that on first click, the refine button is disabled
 	 * @author vajunaedi
 	 */
-    @FXML
-    private void mouseClicked() {
-    	if(textAreaConsole.getText().isEmpty()) {
-    		refineID.setDisable(true);
-    		return;
-    	}
-    }
+//    @FXML
+//    private void mouseClicked() {
+//    	if(textAreaConsole.getText().isEmpty()) {
+//    		refineID.setDisable(true);
+//    		return;
+//    	}
+//    }
     
     /**
 	 * Helper function for findTitleWithRefineKeyword; as an iterator iterates through the list,

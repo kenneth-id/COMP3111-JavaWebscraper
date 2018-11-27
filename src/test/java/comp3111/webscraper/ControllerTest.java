@@ -47,7 +47,7 @@ public class ControllerTest {
 	}
 	
 	@Test
-	public void testDefaultConstructor()throws Exception {
+	public void testDefaultConstructor() throws Exception {
 		assertNotNull(c);
 	}
 	
@@ -104,17 +104,17 @@ public class ControllerTest {
 		assertEquals(itemTest.isEmpty(), false);
 	}
 
-//	@Test
-//	public void checkHelper_checkFalseTitle() {
-//		Item item = createDummyItem("Craigslist", 0.0, "Dummy item for test", LocalDateTime.now());
-//		List<Item> itemTest = new ArrayList<Item>();
-//		itemTest.add(item);
-//		Controller c = new Controller();
-//	
-//		itemTest = c.checkIfTitleIsTheSameAsText(itemTest, "randomText");
-//				
-//		assertEquals(itemTest.isEmpty(), true);
-//	}
+	@Test
+	public void checkHelper_checkFalseTitle() {
+		Item item = createDummyItem("Craigslist", 0.0, "Dummy item for test", LocalDateTime.now());
+		List<Item> itemTest = new ArrayList<Item>();
+		itemTest.add(item);
+		Controller c = new Controller();
+	
+		itemTest = c.findTitleWithRefineKeyword(itemTest, "randomText");
+				
+		assertEquals(itemTest.isEmpty(), true);
+	}
 	
 	@Test
 	public void checkRefining() throws Exception {
@@ -177,7 +177,7 @@ public class ControllerTest {
 		
 		assertEquals(output,output2);
 	}
-	
+//	
 //	@Test
 //	public void checkUpdateConsoleMainFunction() throws Exception {
 //		Item item1 = createDummyItem("Craigslist", 0.0, "Dummy item 1 for test", LocalDateTime.now());
@@ -189,7 +189,7 @@ public class ControllerTest {
 //		
 //		c.updateConsole(itemTest);
 //		
-//		assertNotNull(itemTest);
+//		assertNotNull(item1);
 //	}
 
 	@After
