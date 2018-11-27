@@ -116,7 +116,10 @@ public class Controller {
     
     private String beforeRefine; // to store keyword before refining
     
+    public String totalcount, min, average, lowUrl,latestUrl;
     
+    LocalDateTime latest;
+
     /**
      * Default controller
      */
@@ -125,6 +128,11 @@ public class Controller {
     	lastFiveSearches = FXCollections.observableArrayList();
     	lastFiveResults= new ArrayList<List<Item>>();
     	lastFiveTrends = new ArrayList<Trend>();
+    	totalcount = "";
+    	min = "";
+    	average = "";
+    	lowUrl = "";
+    	latestUrl = "";
     }
 
     /**
@@ -133,10 +141,12 @@ public class Controller {
     @FXML
     private void initialize() {
     	//refineID.setDisable(true); // set refine button to disable on construction
+
     }
 
     private void updateAllTabs() {
     	updateTableTab();
+    	setSummaryTab();
     }
     
     	
@@ -173,10 +183,9 @@ public class Controller {
     	
     	beforeRefine = textFieldKeyword.getText();
     	refineID.setDisable(false);
-    	
+    	getSummaryData(result);
     	updateAllTabs();
     	
-    	setSummary(result);
     }
     
     @FXML
@@ -483,17 +492,14 @@ public class Controller {
   
     }
     
-    private void setSummary(List<Item> result) {
+    public void getSummaryData(List<Item> result) {
     	
     	int count = 0;
     	int priceSum = 0;
     	
     	double lowest = Double.POSITIVE_INFINITY;
-    	String lowUrl = "";
     	
-    	LocalDateTime latest = LocalDateTime.MIN;
-    	String latestUrl = "";
-    	
+    	latest = LocalDateTime.MIN;
     	
     	for (Item item : result) {
     		
@@ -521,9 +527,18 @@ public class Controller {
     	
     	double avg = priceSum / count;
     	
-    	labelCount.setText(String.valueOf(result.size()));
-    	labelPrice.setText(String.valueOf(avg));
-    	labelMin.setText(String.valueOf(lowest));
+    	min = String.valueOf(lowest);
+    	average = String.valueOf(avg);
+    	totalcount = String.valueOf(result.size());
+    	
+    }
+    
+    private void setSummaryTab() {
+    	
+    	labelCount.setText(totalcount);
+    	labelPrice.setText(average);
+    	labelMin.setText(min);
+    	labelLatest.setText(String.valueOf(latest.format(DateTimeFormatter.ofPattern("dd MMM yyyy HH:mm"))));
     	
     	final String url1 = lowUrl;
     	
@@ -533,9 +548,7 @@ public class Controller {
     	    	
     	    	popUpLink(url1);
     	    }
-    	});
-    	
-    	labelLatest.setText(String.valueOf(latest.format(DateTimeFormatter.ofPattern("dd MMM yyyy HH:mm"))));
+    	});	
     	
     	final String url2 = latestUrl;
     	
@@ -547,6 +560,7 @@ public class Controller {
     	    	
     	    }
     	});
+    	
     	
     }
     
