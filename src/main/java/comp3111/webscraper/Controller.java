@@ -140,52 +140,66 @@ public class Controller {
      */
     @FXML
     private void initialize() {
-    	//refineID.setDisable(true); // set refine button to disable on construction
-
+    	refineID.setDisable(true); // set refine button to disable on construction
     }
 
-    private void updateAllTabs() {
+    /**
+     * Updates all tabs whenever a search or refine search is called.
+     * @author - vajunaedi
+     * @param - searchKeyWord, String needed to update the updateTrendTab
+     */
+    public void updateAllTabs(String searchKeyWord, List<Item> result) {
     	updateTableTab();
+    	getSummaryData(result);
     	setSummaryTab();
+    	updateTrendTab(searchKeyWord, result);
     }
     
-    	
     /**
-     * Called when the search button is pressed.
+     * Called to update the trend tab
+     * @author - kennethlee-id
+     * @param - searchKeyWord, String to store the previous searches
+     * @param - result, a list of items to store the scraped results
      */
-    @FXML
-    private void actionSearch() {
-    	String searchKeyWord =textFieldKeyword.getText();
-    	System.out.println("actionSearch: " + searchKeyWord);
-    	
-    	
-    	comboBoxTrend.setItems(lastFiveSearches);
-    	System.out.println("Begin scraping");
-    	result = scraper.scrape(searchKeyWord);
-    	System.out.println("Finished scraping");
+    public void updateTrendTab(String searchKeyWord, List<Item> result) {
     	Trend searchTrend = new Trend (result);
     	if(!lastFiveSearches.contains(searchKeyWord)) {
 	    	addToLastFiveResults(result);
 	    	addToLastFiveTrends(searchTrend);
 	    	addToLastFiveSearches(searchKeyWord);
     	}
-    	
     	updateTrendChart(searchTrend,searchKeyWord);
-//    	
-//    	String output = "Items scraped from craiglist and carousell (Currency in USD) \n ";
-//    	for (Item item : result) {
-//    		output += item.getTitle() + "\t" + item.getPrice() +	 "\t" 
-//    	+ item.getOrigin() +	 "\t" +item.getUrl() + "\n";
-//    	}
-//    	textAreaConsole.setText(output);
+    }
+    	
+    /**
+     * Called when the search button is pressed.
+     * @author - vajunaedi, kennethlee-id, hanskrishandi
+     */
+    @FXML
+    private void actionSearch() {
+    	String searchKeyWord = textFieldKeyword.getText();
+    	System.out.println("actionSearch: " + searchKeyWord);
+    	
+    	comboBoxTrend.setItems(lastFiveSearches);
+    	//System.out.println("Begin scraping");
+    	result = scraper.scrape(searchKeyWord);
+    	//System.out.println("Finished scraping");
+ //   	Trend searchTrend = new Trend (result);
+    	if(!lastFiveSearches.contains(searchKeyWord)) {
+//	    	addToLastFiveResults(result);
+//	    	addToLastFiveTrends(searchTrend);
+//	    	addToLastFiveSearches(searchKeyWord);
+    		updateTrendTab(searchKeyWord, result);
+    	}
+//   	updateTrendChart(searchTrend,searchKeyWord);
     	
     	updateConsole(result);
     	
-    	beforeRefine = textFieldKeyword.getText();
+    	updateAllTabs(searchKeyWord, result);
+
+    	beforeRefine = searchKeyWord;
     	refineID.setDisable(false);
-    	getSummaryData(result);
-    	updateAllTabs();
-    	
+    	//getSummaryData(result);
     }
     
     @FXML
@@ -249,6 +263,7 @@ public class Controller {
     		                     currentNode.setStyle("-fx-background-color: blue;");
     		                     int dateIndex = searchTrend.getDateIndex(currentDataPoint.getXValue());
     		                     updateConsole(searchTrend.getItemList(dateIndex));
+    		                     result = searchTrend.getItemList(dateIndex); // Vivi add - to store the current search 
     		                	 }
     		                 }
     		         }
@@ -270,7 +285,7 @@ public class Controller {
 	 * @param toAdd  String object to be added into the ArrayList 
 	 */
     public void addToLastFiveSearches (String toAdd) {
-    	if(lastFiveSearches.size()<5 ) {
+    	if(lastFiveSearches.size()<5) {
     		lastFiveSearches.add(toAdd);
     	}
     	else {
@@ -284,7 +299,7 @@ public class Controller {
 	 * @author kenneth-id
 	 * @param toAdd  List of Item objects to be added into the ArrayList 
 	 */
-    public void addToLastFiveResults (List<Item> toAdd ) {
+    public void addToLastFiveResults (List<Item> toAdd) {
     	if(lastFiveResults.size()<5) {
     		lastFiveResults.add(toAdd);
     	}
@@ -299,7 +314,7 @@ public class Controller {
 	 * @author kenneth-id
 	 * @param toAdd  Trend object to be added into the ArrayList 
 	 */
-    public void addToLastFiveTrends (Trend toAdd ) {
+    public void addToLastFiveTrends (Trend toAdd) {
     	if(lastFiveTrends.size()<5) {
     		lastFiveTrends.add(toAdd);
     	}
@@ -359,7 +374,6 @@ public class Controller {
     	for (Item item : result) {
     		output += printItemAttributes(item);
     	}
-    	
     	textAreaConsole.setText(output);
     }
     
@@ -410,20 +424,14 @@ public class Controller {
     		refineID.setDisable(true);
     		return;
     	}
-
-    	if(refineID.isDisabled()==false) {
-    		result = scraper.scrape(beforeRefine);
-    		
-    		// Update the result lists 
-    		result = findTitleWithRefineKeyword(result, textFieldKeywordRefine.getText());
-    		
-    		// Console is updated with the refined results
-    		updateConsole(result);
-    		// Update all other tabs to the right of console
-    		updateAllTabs();
-    	}
-    	
-    	// Set refine to be disabled again
+    	//result = scraper.scrape(beforeRefine);
+    	// Update the result lists 
+    	result = findTitleWithRefineKeyword(result, textFieldKeywordRefine.getText());
+    	// Console is updated with the refined results
+    	updateConsole(result);
+    	// Update all other tabs to the right of console
+    	updateAllTabs(beforeRefine + textFieldKeywordRefine.getText(), result);
+    	//updateTrendTab(beforeRefine, result);
     	refineID.setDisable(true);
     }
 
@@ -433,13 +441,12 @@ public class Controller {
 	 */
 	private static class HyperlinkCell implements  Callback<TableColumn<Item, String>, TableCell<Item, String>> {
 		
-
 	    /**
 		 * This function help define the URL's table cell to be defined as Hyperlink, although it is initially stored as String.
 		 * In addition, it is handling each cell to be opened in a new browser.
 		 * @author vajunaedi
 		 * @param arg - calling the TableColumn URL
-		 * @return represnets the TableColumn that has been set into Hyperlink 
+		 * @return represents the TableColumn that has been set into Hyperlink 
 		 */
 	    @Override
 	    public TableCell<Item, String> call(TableColumn<Item, String> arg) {
@@ -475,7 +482,6 @@ public class Controller {
     @FXML
     private void updateTableTab() {
     	tableControl.setEditable(false);
-    	
     	ObservableList<Item> data = FXCollections.observableArrayList(result);
     	
     	title.setCellValueFactory(new PropertyValueFactory<Item,String>("title"));
@@ -486,7 +492,6 @@ public class Controller {
     	
     	// Set Data to Table Control
     	tableControl.setItems(data);
-    	
     	// Set all columns with data
     	tableControl.getColumns().setAll(title,price,url,postedDate);
   
@@ -518,7 +523,7 @@ public class Controller {
 
     		if(latest.isBefore(date)) {
     			latest = date;
-    			latestUrl = url;
+    			latestUrl = url;	
     		}
     		
     		priceSum += price;

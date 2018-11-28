@@ -192,7 +192,7 @@ public class WebScraper {
 	 * @return .HTML file in the directory you specify. Change it because I am using my own directory there
 	 * @throws IOException when there is an error
 	 */
-	private void generateHTMLPage(HtmlPage webPage) throws IOException {
+//	private void generateHTMLPage(HtmlPage webPage) throws IOException {
 //		WebResponse response = webPage.getWebResponse();
 //		String content = response.getContentAsString();
 //		File debug= new File("/home/kenneth/git/carousell_debug.html"); // needs to change to run in other files
@@ -204,7 +204,7 @@ public class WebScraper {
 //	    FileWriter fw = new FileWriter(debug);
 //	    fw.write(content);
 //	    fw.close();
-	}
+//	}
 	
 
 }

@@ -1,5 +1,4 @@
 package comp3111.webscraper;
-	
 
 import static org.junit.Assert.*;
 
@@ -20,14 +19,21 @@ import org.junit.Test;
 //import javafx.scene.control.TextField;
 //import javafx.scene.control.TextArea;
 
-
 import com.gargoylesoftware.htmlunit.javascript.host.Console;
 
 public class ControllerTest {
-	
 	private Controller c;
 	static List<Item> result;
 	private static WebScraper scraper;
+
+	public Item createDummyItem(String origin, double price, String title, LocalDateTime time) {
+		Item item = new Item();
+		item.setOrigin(origin);
+		item.setPostedDate(time);
+		item.setPrice(price);
+		item.setTitle(title);
+		return item;
+	}
 	
 	@Before
 	public void setUp() {
@@ -41,7 +47,7 @@ public class ControllerTest {
 	}
 	
 	@Test
-	public void testDefaultConstructor()throws Exception {
+	public void testDefaultConstructor() throws Exception {
 		assertNotNull(c);
 	}
 	
@@ -73,21 +79,13 @@ public class ControllerTest {
 		assertEquals(5,c.getLastFiveTrends().size());
 	}
 
-	public Item createDummyItem(String origin, double price, String title, LocalDateTime time) {
-		Item item = new Item();
-		item.setOrigin(origin);
-		item.setPostedDate(time);
-		item.setPrice(price);
-		item.setTitle(title);
-		return item;
-	}
 	
 	@Test
 	public void checkHelper_hasNextItem() throws Exception {
 		Item item = createDummyItem("Craigslist", 0.0, "Dummy item for test", LocalDateTime.now());
 		List<Item> itemTest = new ArrayList<Item>();
 		itemTest.add(item);
-		Controller c = new Controller();
+		//Controller c = new Controller();
 		
 		Iterator<Item> iter = itemTest.listIterator();
 				
@@ -99,31 +97,31 @@ public class ControllerTest {
 		Item item = createDummyItem("Craigslist", 0.0, "Dummy item for test", LocalDateTime.now());
 		List<Item> itemTest = new ArrayList<Item>();
 		itemTest.add(item);
-		Controller c = new Controller();
+		//Controller c = new Controller();
 	
 		itemTest = c.findTitleWithRefineKeyword(itemTest, "Dummy");
 				
 		assertEquals(itemTest.isEmpty(), false);
 	}
 
-//	@Test
-//	public void checkHelper_checkFalseTitle() {
-//		Item item = createDummyItem("Craigslist", 0.0, "Dummy item for test", LocalDateTime.now());
-//		List<Item> itemTest = new ArrayList<Item>();
-//		itemTest.add(item);
-//		Controller c = new Controller();
-//	
-//		itemTest = c.checkIfTitleIsTheSameAsText(itemTest, "randomText");
-//				
-//		assertEquals(itemTest.isEmpty(), true);
-//	}
+	@Test
+	public void checkHelper_checkFalseTitle() {
+		Item item = createDummyItem("Craigslist", 0.0, "Dummy item for test", LocalDateTime.now());
+		List<Item> itemTest = new ArrayList<Item>();
+		itemTest.add(item);
+		Controller c = new Controller();
+	
+		itemTest = c.findTitleWithRefineKeyword(itemTest, "randomText");
+				
+		assertEquals(itemTest.isEmpty(), true);
+	}
 	
 	@Test
 	public void checkRefining() throws Exception {
 		Item item = createDummyItem("Craigslist", 0.0, "Dummy item for test", LocalDateTime.now());
 		List<Item> itemTest = new ArrayList<Item>();
 		itemTest.add(item);
-		Controller c = new Controller();
+		//Controller c = new Controller();
 	
 		itemTest = c.findTitleWithRefineKeyword(itemTest, "randomText");
 		
@@ -168,7 +166,6 @@ public class ControllerTest {
 		Item item = createDummyItem("Craigslist", 0.0, "Dummy item for test", LocalDateTime.now());
 		List<Item> itemTest = new ArrayList<Item>();
 		itemTest.add(item);
-		Controller c = new Controller();
 		
 		String output = "";
 		String output2 = "";
@@ -180,7 +177,7 @@ public class ControllerTest {
 		
 		assertEquals(output,output2);
 	}
-	
+
 
 	@After
 	public void tearDown() throws Exception{
