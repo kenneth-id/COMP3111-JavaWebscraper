@@ -152,7 +152,7 @@ public class Controller {
     	updateTableTab();
     	getSummaryData(result);
     	setSummaryTab();
-    	//updateTrendTab(searchKeyWord, result);
+    	updateTrendTab(searchKeyWord, result);
     }
     
     /**
@@ -163,10 +163,11 @@ public class Controller {
      */
     public void updateTrendTab(String searchKeyWord, List<Item> result) {
     	Trend searchTrend = new Trend (result);
-    	addToLastFiveResults(result);
-    	addToLastFiveTrends(searchTrend);
-    	addToLastFiveSearches(searchKeyWord);
-    	
+    	if(!lastFiveSearches.contains(searchKeyWord)) {
+	    	addToLastFiveResults(result);
+	    	addToLastFiveTrends(searchTrend);
+	    	addToLastFiveSearches(searchKeyWord);
+    	}
     	updateTrendChart(searchTrend,searchKeyWord);
     }
     	
@@ -176,7 +177,7 @@ public class Controller {
      */
     @FXML
     private void actionSearch() {
-    	String searchKeyWord =textFieldKeyword.getText();
+    	String searchKeyWord = textFieldKeyword.getText();
     	System.out.println("actionSearch: " + searchKeyWord);
     	
     	comboBoxTrend.setItems(lastFiveSearches);
@@ -194,10 +195,11 @@ public class Controller {
     	
     	updateConsole(result);
     	
-    	beforeRefine = textFieldKeyword.getText();
+    	updateAllTabs(searchKeyWord, result);
+
+    	beforeRefine = searchKeyWord;
     	refineID.setDisable(false);
     	//getSummaryData(result);
-    	updateAllTabs(searchKeyWord, result);
     }
     
     @FXML
@@ -261,6 +263,7 @@ public class Controller {
     		                     currentNode.setStyle("-fx-background-color: blue;");
     		                     int dateIndex = searchTrend.getDateIndex(currentDataPoint.getXValue());
     		                     updateConsole(searchTrend.getItemList(dateIndex));
+    		                     result = searchTrend.getItemList(dateIndex); // Vivi add - to store the current search 
     		                	 }
     		                 }
     		         }
@@ -421,13 +424,13 @@ public class Controller {
     		refineID.setDisable(true);
     		return;
     	}
-    	result = scraper.scrape(beforeRefine);
+    	//result = scraper.scrape(beforeRefine);
     	// Update the result lists 
     	result = findTitleWithRefineKeyword(result, textFieldKeywordRefine.getText());
     	// Console is updated with the refined results
     	updateConsole(result);
     	// Update all other tabs to the right of console
-    	updateAllTabs(beforeRefine, result);
+    	updateAllTabs(beforeRefine + textFieldKeywordRefine.getText(), result);
     	//updateTrendTab(beforeRefine, result);
     	refineID.setDisable(true);
     }
@@ -520,7 +523,7 @@ public class Controller {
 
     		if(latest.isBefore(date)) {
     			latest = date;
-    			latestUrl = url;
+    			latestUrl = url;	
     		}
     		
     		priceSum += price;
