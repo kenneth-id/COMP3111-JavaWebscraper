@@ -177,20 +177,7 @@ public class ControllerTest {
 		
 		assertEquals(output,output2);
 	}
-//	
-//	@Test
-//	public void checkUpdateConsoleMainFunction() throws Exception {
-//		Item item1 = createDummyItem("Craigslist", 0.0, "Dummy item 1 for test", LocalDateTime.now());
-//		Item item2 = createDummyItem("Craigslist", 0.0, "Dummy item 2 for test", LocalDateTime.now());
-//
-//		List<Item> itemTest = new ArrayList<Item>();
-//		itemTest.add(item1);
-//		itemTest.add(item2);
-//		
-//		c.updateConsole(itemTest);
-//		
-//		assertNotNull(item1);
-//	}
+
 
 	@After
 	public void tearDown() throws Exception{
