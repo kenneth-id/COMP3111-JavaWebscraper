@@ -21,6 +21,8 @@ import org.junit.Test;
 
 import com.gargoylesoftware.htmlunit.javascript.host.Console;
 
+import javafx.scene.chart.XYChart;
+
 public class ControllerTest {
 	private Controller c;
 	static List<Item> result;
@@ -213,6 +215,13 @@ public class ControllerTest {
 		}
 		
 		assertEquals(output,output2);
+	}
+	
+	@Test
+	public void testAddDataPoints() throws Exception{
+		Trend trend = new Trend(result);
+		XYChart.Series<String, Number> averagePricesSeries =c.addDataPoints(trend,"watch");
+		assertNotNull(averagePricesSeries);
 	}
 
 
