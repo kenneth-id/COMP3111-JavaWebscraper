@@ -116,9 +116,8 @@ public class Controller {
     
     private String beforeRefine; // to store keyword before refining
     
-    public String totalcount, min, average, lowUrl,latestUrl;
+    public String totalcount, min, average, lowUrl,latestUrl, latest;
     
-    LocalDateTime latest;
 
     /**
      * Default controller
@@ -173,7 +172,7 @@ public class Controller {
     	
     /**
      * Called when the search button is pressed.
-     * @author - vajunaedi, kennethlee-id, hanskrishandi
+     * @author - vajunaedi, kennethlee-id, hskrishandi
      */
     @FXML
     private void actionSearch() {
@@ -183,6 +182,7 @@ public class Controller {
     	comboBoxTrend.setItems(lastFiveSearches);
     	//System.out.println("Begin scraping");
     	result = scraper.scrape(searchKeyWord);
+
     	//System.out.println("Finished scraping");
  //   	Trend searchTrend = new Trend (result);
     	if(!lastFiveSearches.contains(searchKeyWord)) {
@@ -202,11 +202,11 @@ public class Controller {
     	//getSummaryData(result);
     }
     
-    @FXML
     /**
 	 * Called when the Value property of the combobox in the Trend tab is changed.
 	 * @author kenneth-id
 	 */
+    @FXML
     void trendComboBoxAction(ActionEvent event) {
     	String comboString = comboBoxTrend.getValue();
     	System.out.println(comboString);
@@ -497,20 +497,46 @@ public class Controller {
   
     }
     
+    /**
+	 * Basic Task 1: Summary. 
+	 * This function gets the total count, lowest selling price, average, and latest item from
+	 * the scraped items, and put into the data members of controller
+	 * @author hskrishandi
+	 * @param result - the list of items to check or iterate through
+	 */
+    
     public void getSummaryData(List<Item> result) {
+    	
+    	System.out.println(result.size());
+    	
+    	if(result.size() == 0) {
+    		min = "-";
+        	average = "-";
+        	totalcount = String.valueOf(result.size());
+        	latestUrl = "";
+        	lowUrl = "";
+        	latest = "-";
+        	return;
+    	}
     	
     	int count = 0;
     	int priceSum = 0;
+    	double avg;
     	
     	double lowest = Double.POSITIVE_INFINITY;
     	
-    	latest = LocalDateTime.MIN;
+    	LocalDateTime datelatest = LocalDateTime.MIN;
     	
     	for (Item item : result) {
     		
     		double price = item.getPrice();
     		LocalDateTime  date = item.getPostedDate();
     		String url = item.getUrl();
+    		
+    		if(datelatest.isBefore(date)) {
+    			datelatest = date;
+    			latestUrl = url;	
+    		}
     		
     		if(price == 0) {
     			continue;
@@ -520,30 +546,37 @@ public class Controller {
     			lowest = price;
     			lowUrl = url;
     		}
-
-    		if(latest.isBefore(date)) {
-    			latest = date;
-    			latestUrl = url;	
-    		}
     		
     		priceSum += price;
     		count++;
     	}
     	
-    	double avg = priceSum / count;
+    	if(count == 0) {
+    		avg = 0;
+    		lowest = 0;
+    	} else {
+    		avg = priceSum / count;
+    	}
     	
     	min = String.valueOf(lowest);
     	average = String.valueOf(avg);
     	totalcount = String.valueOf(result.size());
+    	latest = String.valueOf(datelatest.format(DateTimeFormatter.ofPattern("dd MMM yyyy HH:mm")));
     	
     }
+    
+    /** 
+	 * Update the summary tab in the UI using the data members, and set the hyperlinks
+	 * for lowest selling price and latest item
+	 * @author hskrishandi
+	 */
     
     private void setSummaryTab() {
     	
     	labelCount.setText(totalcount);
     	labelPrice.setText(average);
     	labelMin.setText(min);
-    	labelLatest.setText(String.valueOf(latest.format(DateTimeFormatter.ofPattern("dd MMM yyyy HH:mm"))));
+    	labelLatest.setText(latest);
     	
     	final String url1 = lowUrl;
     	
@@ -569,7 +602,17 @@ public class Controller {
     	
     }
     
+    /** 
+	 * Helper function to open browser when clicking hyperlink
+	 * @author hskrishandi
+	 * @param link - the destination link
+	 */
+    
     private void popUpLink(String link) {
+    	
+    	if(link == "")
+    		return;
+    	
     	Desktop d = Desktop.getDesktop();
     	URI u = URI.create(link);
     	
