@@ -417,7 +417,7 @@ public class Controller {
 	 */
     @FXML
     public void refineSearch() {
-    	if(textAreaConsole.getText().isEmp()) {
+    	if(textAreaConsole.getText().isEmpty()) {
     		refineID.setDisable(true);
     		return;
     	}
