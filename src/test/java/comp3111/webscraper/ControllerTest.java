@@ -165,6 +165,40 @@ public class ControllerTest {
 		assertEquals(c.min, "10.0");
 		assertEquals(c.totalcount, "5");
 	}
+	
+	@Test
+	public void testSummaryAllZeros() {
+		
+		
+		List<Item> itemsTest = new ArrayList<Item>();
+		Item item1 = createDummyItem("Craigslist", 0.0, "Dummy item1 lowest selling price", LocalDateTime.MIN);
+		Item item2 = createDummyItem("Craigslist", 0.0, "Dummy item2 lowest selling price", LocalDateTime.MIN);
+		Item item3 = createDummyItem("Craigslist", 0.0, "Dummy item3 lowest selling price", LocalDateTime.MIN);
+		
+		itemsTest.add(item1);
+		itemsTest.add(item2);
+		itemsTest.add(item3);
+		
+		c.getSummaryData(itemsTest);
+		
+		assertEquals(c.average, "0.0");
+		assertEquals(c.min, "0.0");
+		assertEquals(c.totalcount, "3");
+	}
+	
+	@Test
+	public void testSummaryNotFound() {
+		List<Item> itemsTest = new ArrayList<Item>();
+		
+		c.getSummaryData(itemsTest);
+	
+		assertEquals(c.average, "-");
+		assertEquals(c.latest, "-");
+		assertEquals(c.latestUrl, "");
+		assertEquals(c.lowUrl, "");
+		assertEquals(c.min, "-");
+		assertEquals(c.totalcount, "0");
+	}
 
 	@Test
 	public void checkUpdateConsole() throws Exception {
