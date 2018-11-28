@@ -173,11 +173,7 @@ public class Controller {
     	
     /**
      * Called when the search button is pressed.
-<<<<<<< HEAD
      * @author - vajunaedi, kennethlee-id, hskrishandi
-=======
-     * @author - vajunaedi, kenneth-id, hanskrishandi
->>>>>>> branch 'master' of https://github.com/kenneth-id/COMP3111-TKOXP.git
      */
     @FXML
     private void actionSearch() {
