@@ -134,16 +134,18 @@ public class ControllerTest {
 	public void testSummary() {
 		
 		//cheapest item
-		Item item1 = createDummyItem("Craigslist", 10.0, "Dummy item for test 1", LocalDateTime.MIN);
+		Item item1 = createDummyItem("Craigslist", 10.0, "Dummy item lowest selling price", LocalDateTime.MIN);
 		item1.setUrl("http://www.google.com");
 		
 		Item item2 = createDummyItem("Craigslist", 12.0, "Dummy item for test 2", LocalDateTime.MIN);
 		
 		//latest item
-		Item item3 = createDummyItem("Craigslist", 14.0, "Dummy item for test 3", LocalDateTime.now());
+		Item item3 = createDummyItem("Craigslist", 14.0, "Dummy item latest", LocalDateTime.now());
 		item3.setUrl("http://www.yahoo.com");
 		
 		Item item4 = createDummyItem("Craigslist", 16.0, "Dummy item for test 4", LocalDateTime.MIN);
+		
+		Item item5 = createDummyItem("Craiglist", 0, "Dummy item for test zero price, excluded from average", LocalDateTime.MIN);
 		
 		List<Item> itemsTest = new ArrayList<Item>();
 		
@@ -151,6 +153,7 @@ public class ControllerTest {
 		itemsTest.add(item2);
 		itemsTest.add(item3);
 		itemsTest.add(item4);
+		itemsTest.add(item5);
 		
 		c.getSummaryData(itemsTest);
 		
@@ -158,7 +161,7 @@ public class ControllerTest {
 		assertEquals(c.latestUrl, "http://www.yahoo.com");
 		assertEquals(c.lowUrl, "http://www.google.com");
 		assertEquals(c.min, "10.0");
-		assertEquals(c.totalcount, "4");
+		assertEquals(c.totalcount, "5");
 	}
 
 	@Test
