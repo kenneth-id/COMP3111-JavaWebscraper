@@ -145,8 +145,9 @@ public class Controller {
 
     /**
      * Updates all tabs whenever a search or refine search is called.
-     * @author - vajunaedi
-     * @param - searchKeyWord, String needed to update the updateTrendTab
+     * @author vajunaedi
+     * @param searchKeyWord - String needed to update the updateTrendTab
+     * @param result - List of items from scraper
      */
     public void updateAllTabs(String searchKeyWord, List<Item> result) {
     	updateTableTab();
@@ -157,9 +158,9 @@ public class Controller {
     
     /**
      * Called to update the trend tab
-     * @author - kenneth-id
-     * @param - searchKeyWord, String to store the previous searches
-     * @param - result, a list of items to store the scraped results
+     * @author kenneth-id
+     * @param searchKeyWord - String to store the previous searches
+     * @param result - a list of items to store the scraped results
      */
     public void updateTrendTab(String searchKeyWord, List<Item> result) {
     	Trend searchTrend = new Trend (result);
@@ -269,7 +270,7 @@ public class Controller {
 	 * @author kenneth-id
 	 * @param searchTrend - Trend object 
 	 * @param searchKeyWord - String of the searched keyword
-	 * @return XYChart.Series<String, Number> - the Series of data points we will add to the chart 
+	 * @return the Series of data points we will add to the chart 
 	 */    
     public XYChart.Series<String, Number> addDataPoints(Trend searchTrend, String searchKeyWord) {
     	XYChart.Series<String, Number> averagePricesSeries = new XYChart.Series<String, Number>();
@@ -368,7 +369,7 @@ public class Controller {
 	 * Helper method to print on console 
 	 * @author vajunaedi
 	 * @return item's string
-	 * @param the Item to be converted into String
+	 * @param item - the Item to be converted into String
 	 */ 
     public String printItemAttributes(Item item) {
     	String output = "";
