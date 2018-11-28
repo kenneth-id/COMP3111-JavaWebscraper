@@ -157,7 +157,7 @@ public class Controller {
     
     /**
      * Called to update the trend tab
-     * @author - kennethlee-id
+     * @author - kenneth-id
      * @param - searchKeyWord, String to store the previous searches
      * @param - result, a list of items to store the scraped results
      */
@@ -173,7 +173,7 @@ public class Controller {
     	
     /**
      * Called when the search button is pressed.
-     * @author - vajunaedi, kennethlee-id, hanskrishandi
+     * @author - vajunaedi, kenneth-id, hanskrishandi
      */
     @FXML
     private void actionSearch() {
@@ -185,12 +185,12 @@ public class Controller {
     	result = scraper.scrape(searchKeyWord);
     	//System.out.println("Finished scraping");
  //   	Trend searchTrend = new Trend (result);
-    	if(!lastFiveSearches.contains(searchKeyWord)) {
+ //   	if(!lastFiveSearches.contains(searchKeyWord)) {
 //	    	addToLastFiveResults(result);
 //	    	addToLastFiveTrends(searchTrend);
 //	    	addToLastFiveSearches(searchKeyWord);
-    		updateTrendTab(searchKeyWord, result);
-    	}
+//    		updateTrendTab(searchKeyWord, result);
+ //   	}
 //   	updateTrendChart(searchTrend,searchKeyWord);
     	
     	updateConsole(result);
@@ -202,11 +202,12 @@ public class Controller {
     	//getSummaryData(result);
     }
     
-    @FXML
+ 
     /**
 	 * Called when the Value property of the combobox in the Trend tab is changed.
 	 * @author kenneth-id
 	 */
+    @FXML
     void trendComboBoxAction(ActionEvent event) {
     	String comboString = comboBoxTrend.getValue();
     	System.out.println(comboString);
@@ -215,6 +216,8 @@ public class Controller {
     	updateTrendChart(comboTrend,comboString);
     	updateConsole(lastFiveResults.get(index));
     }
+    
+    
     
     /**
 	 * Helper method to update the chart in the Trend tab 
@@ -225,19 +228,9 @@ public class Controller {
     public void updateTrendChart(Trend searchTrend, String searchKeyWord) {
     	//remove previous linechart
     	areaChartTrend.getData().clear();
-    	XYChart.Series<String, Number> averagePricesSeries = new XYChart.Series<String, Number>();
-    	averagePricesSeries.setName("The average selling price of the " + searchKeyWord);
-    	int numberOfPoints=0;
-    	for(int i=0; i<7;i++) {
-    		if(!(searchTrend.getAveragePricesList().get(i).equals(0.0))) {
-    		Data<String,Number> point =new Data<String, Number>(searchTrend.getDatesString().get(i), 
-    				searchTrend.getAveragePricesList().get(i));
-    		averagePricesSeries.getData().add(point);
-    		numberOfPoints++;
-    		}
-    	}
+    	XYChart.Series<String, Number> averagePricesSeries = addDataPoints(searchTrend,searchKeyWord);
     	areaChartTrend.getData().addAll(averagePricesSeries);
-    	final int numberOfPointsFinal = numberOfPoints;
+    	final int numberOfPointsFinal = averagePricesSeries.getData().size();
     	//adding double click event handler to each point
     	for(int i=0; i<numberOfPointsFinal;i++) {
     		Data<String, Number> currentDataPoint =areaChartTrend.getData().get(0).getData().get(i);
@@ -269,6 +262,26 @@ public class Controller {
     		         }
     		    });
     	}
+    }
+    
+    /**
+	 * Helper method to add data points the chart in the Trend tab 
+	 * @author kenneth-id
+	 * @param searchTrend - Trend object 
+	 * @param searchKeyWord - String of the searched keyword
+	 * @return XYChart.Series<String, Number> - the Series of data points we will add to the chart 
+	 */    
+    public XYChart.Series<String, Number> addDataPoints(Trend searchTrend, String searchKeyWord) {
+    	XYChart.Series<String, Number> averagePricesSeries = new XYChart.Series<String, Number>();
+    	averagePricesSeries.setName("The average selling price of the " + searchKeyWord);
+    	for(int i=0; i<7;i++) {
+    		if(!(searchTrend.getAveragePricesList().get(i).equals(0.0))) {
+    		Data<String,Number> point =new Data<String, Number>(searchTrend.getDatesString().get(i), 
+    				searchTrend.getAveragePricesList().get(i));
+    		averagePricesSeries.getData().add(point);
+    		}
+    	}
+    	return averagePricesSeries;
     }
     
     /**
