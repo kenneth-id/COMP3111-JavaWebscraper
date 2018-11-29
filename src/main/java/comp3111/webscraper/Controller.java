@@ -157,7 +157,7 @@ public class Controller {
     
     /**
      * Called to update the trend tab
-     * @author - kennethlee-id
+     * @author - kennethleeid
      * @param - searchKeyWord, String to store the previous searches
      * @param - result, a list of items to store the scraped results
      */
@@ -185,16 +185,15 @@ public class Controller {
     	result = scraper.scrape(searchKeyWord);
     	//System.out.println("Finished scraping");
  //   	Trend searchTrend = new Trend (result);
-    	if(!lastFiveSearches.contains(searchKeyWord)) {
+//    	if(!lastFiveSearches.contains(searchKeyWord)) {
 //	    	addToLastFiveResults(result);
 //	    	addToLastFiveTrends(searchTrend);
 //	    	addToLastFiveSearches(searchKeyWord);
-    		updateTrendTab(searchKeyWord, result);
-    	}
+//    	}
 //   	updateTrendChart(searchTrend,searchKeyWord);
     	
+    	updateTrendTab(searchKeyWord, result);
     	updateConsole(result);
-    	
     	updateAllTabs(searchKeyWord, result);
 
     	beforeRefine = searchKeyWord;
@@ -202,11 +201,11 @@ public class Controller {
     	//getSummaryData(result);
     }
     
-    @FXML
     /**
 	 * Called when the Value property of the combobox in the Trend tab is changed.
-	 * @author kenneth-id
+	 * @author kennethid
 	 */
+    @FXML
     void trendComboBoxAction(ActionEvent event) {
     	String comboString = comboBoxTrend.getValue();
     	System.out.println(comboString);
@@ -218,9 +217,9 @@ public class Controller {
     
     /**
 	 * Helper method to update the chart in the Trend tab 
-	 * @author kenneth-id
-	 * @param searchTrend - Trend object 
-	 * @param searchKeyWord - String of the searched keyword 
+	 * @author kennethid
+	 * @param searchTrend Trend object 
+	 * @param searchKeyWord String of the searched keyword 
 	 */
     public void updateTrendChart(Trend searchTrend, String searchKeyWord) {
     	//remove previous linechart
@@ -281,7 +280,7 @@ public class Controller {
     
     /**
 	 * Helper method to add a String object to the ArrayList lastFiveSearches 
-	 * @author kenneth-id
+	 * @author kennethid
 	 * @param toAdd  String object to be added into the ArrayList 
 	 */
     public void addToLastFiveSearches (String toAdd) {
@@ -296,7 +295,7 @@ public class Controller {
     
     /**
 	 * Helper method to add a List of Items to the ArrayList lastFiveResults 
-	 * @author kenneth-id
+	 * @author kennethid
 	 * @param toAdd  List of Item objects to be added into the ArrayList 
 	 */
     public void addToLastFiveResults (List<Item> toAdd) {
@@ -311,7 +310,7 @@ public class Controller {
     
     /**
 	 * Helper method to add a Trend object to the ArrayList lastFiveTrends 
-	 * @author kenneth-id
+	 * @author kennethid
 	 * @param toAdd  Trend object to be added into the ArrayList 
 	 */
     public void addToLastFiveTrends (Trend toAdd) {
@@ -335,7 +334,7 @@ public class Controller {
     
     /**
 	 * Helper method to get the ArrayList lastFiveTrends from the controller class 
-	 * @author kenneth-id
+	 * @author kennethid
 	 * @return The ArrayList of Trend object, lastFiveTrends from the controller class 
 	 */
     public ArrayList<Trend> getLastFiveTrends(){
@@ -344,7 +343,7 @@ public class Controller {
     
     /**
 	 * Helper method to get the ArrayList of List lastFiveResults from the controller class 
-	 * @author kenneth-id
+	 * @author kennethid
 	 * @return The ArrayList of List filled with Item objects, lastFiveResults from the controller class 
 	 */
     public ArrayList<List<Item>> getLastFiveResults(){
@@ -378,13 +377,21 @@ public class Controller {
     }
     
 
+//    /**
+//	 * Additional method to ensure that on first click, the refine button is disabled
+//	 * @author vajunaedi
+//	 */
+//    @FXML
+//    private void mouseClicked() {
+//    	disableRefineIDonEmptyConsole();
+//    }
+//    
     /**
 	 * Additional method to ensure that on first click, the refine button is disabled
 	 * @author vajunaedi
 	 */
-    @FXML
-    private void mouseClicked() {
-    	if(textAreaConsole.getText().isEmpty()) {
+    private void disableRefineIDonEmptyConsole() {
+    	if(result == null) {
     		refineID.setDisable(true);
     		return;
     	}
@@ -420,17 +427,18 @@ public class Controller {
 	 */
     @FXML
     public void refineSearch() {
-    	if(textAreaConsole.getText().isEmpty()) {
-    		refineID.setDisable(true);
-    		return;
-    	}
+//    	if(textAreaConsole.getText().isEmpty()) {
+//    		refineID.setDisable(true);
+//    		return;
+//    	}
+    	disableRefineIDonEmptyConsole();
     	//result = scraper.scrape(beforeRefine);
     	// Update the result lists 
     	result = findTitleWithRefineKeyword(result, textFieldKeywordRefine.getText());
     	// Console is updated with the refined results
     	updateConsole(result);
     	// Update all other tabs to the right of console
-    	updateAllTabs(beforeRefine + textFieldKeywordRefine.getText(), result);
+    	updateAllTabs(beforeRefine + " " + textFieldKeywordRefine.getText(), result);
     	//updateTrendTab(beforeRefine, result);
     	refineID.setDisable(true);
     }

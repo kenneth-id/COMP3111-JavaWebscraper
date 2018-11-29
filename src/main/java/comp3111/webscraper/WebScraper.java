@@ -17,7 +17,7 @@ import java.util.Vector;
 
 /**
  * Webscraper class, use it to scrape websites 
- * @author kenneth-id
+ * @author kennethid
  */
 public class WebScraper {
 
@@ -184,14 +184,14 @@ public class WebScraper {
 		return null;
 	}
 	
-	
-	/**
-	 * helper method of this class, use it for debugging purposes. 
-	 * @author kenneth-id
-	 * @param webPage - a HTMLPage you get from the .getPage function
-	 * @return .HTML file in the directory you specify. Change it because I am using my own directory there
-	 * @throws IOException when there is an error
-	 */
+//	
+//	/**
+//	 * helper method of this class, use it for debugging purposes. 
+//	 * @author kenneth id
+//	 * @param webPage a HTMLPage you get from the .getPage function
+//	 * @return .HTML file in the directory you specify. Change it because I am using my own directory there
+//	 * @throws IOException when there is an error
+//	 */
 //	private void generateHTMLPage(HtmlPage webPage) throws IOException {
 //		WebResponse response = webPage.getWebResponse();
 //		String content = response.getContentAsString();

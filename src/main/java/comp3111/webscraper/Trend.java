@@ -25,13 +25,13 @@ public class Trend {
 	averagePricesList = new ArrayList<Double>();
 	datesString= new ArrayList<String>();
 	}
+	
 	/**
 	 * Parameterized constructor 
 	 * @author kenneth-id
 	 * @return A Trend object initialized with data from a list of Items
 	 * @param result - a list of Items
 	 */
-	
 	public Trend(List<Item> result) {
 		itemLists = new ArrayList<ArrayList<Item>>();
 		averagePricesList = new ArrayList<Double>();
