@@ -47,14 +47,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 /**
- * 
- * @author kevinw
- * @author kenneth-id
- * @author vajunaedi
- * @author hskrishandi
- *
  * Controller class that manage GUI interaction. Please see document about JavaFX for details.
- * 
+ * @author kevinw, kenneth-id, vajunaedi, hskrishandi
  */
 public class Controller {
 
@@ -175,9 +169,13 @@ public class Controller {
     	
     /**
      * Called when the search button is pressed.
+<<<<<<< HEAD
+     * @author - vajunaedi, kennethlee-id, hskrishandi
+=======
      * @author vajunaedi
      * @author kenneth-id
      * @author hskrishandi
+>>>>>>> branch 'master' of https://github.com/kenneth-id/COMP3111-TKOXP.git
      */
     @FXML
     private void actionSearch() {
