@@ -16,9 +16,8 @@ public class Trend {
 	private static final DateTimeFormatter displayFormatter = DateTimeFormatter.ofPattern("MM/dd/yyyy ");
 
 	/**
-	 * Default constructor 
+	 * Default constructor of Trend class
 	 * @author kenneth-id
-	 * @return An uninitialized Trend object
 	 */
 	public Trend() {
 	itemLists = new ArrayList<ArrayList<Item>>();
@@ -27,9 +26,8 @@ public class Trend {
 	}
 	
 	/**
-	 * Parameterized constructor 
+	 * Parameterized constructor of Trend class
 	 * @author kenneth-id
-	 * @return A Trend object initialized with data from a list of Items
 	 * @param result - a list of Items
 	 */
 	public Trend(List<Item> result) {
@@ -44,6 +42,7 @@ public class Trend {
 	/**
 	 * Helper method to initialized a Trend object with data from a list of Items
 	 * @author kenneth-id
+	 * @param result - List of Item
 	 */
 	public void initializeTrend(List<Item> result) {
 		setItemLists(result);
@@ -73,7 +72,7 @@ public class Trend {
 	 * @author kenneth-id
 	 * @param index - integer that specifies the index you want to get 
 	 * @return The ArrayList of Items specified by the index, returns -1 if String is not found
-	 * @throws IndexOutOfBoundsException - if the index is out of range (index < 0 || index >= size())
+	 * @throws IndexOutOfBoundsException - if the index is out of range 
 	 */
 	public ArrayList<Item> getItemList(int index) {
 		return itemLists.get(index);
@@ -104,6 +103,7 @@ public class Trend {
 	/**
 	 * Helper method to get the ArrayList datesString 
 	 * @author kenneth-id
+	 * @return String ArrayList of dates
 	 */
 	public ArrayList <String> getDatesString() {
 		return datesString;

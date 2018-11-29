@@ -116,9 +116,8 @@ public class Controller {
     
     private String beforeRefine; // to store keyword before refining
     
-    public String totalcount, min, average, lowUrl,latestUrl;
+    public String totalcount, min, average, lowUrl,latestUrl, latest;
     
-    LocalDateTime latest;
 
     /**
      * Default controller
@@ -145,8 +144,9 @@ public class Controller {
 
     /**
      * Updates all tabs whenever a search or refine search is called.
-     * @author - vajunaedi
-     * @param - searchKeyWord, String needed to update the updateTrendTab
+     * @author vajunaedi
+     * @param searchKeyWord - String needed to update the updateTrendTab
+     * @param result - List of items from scraper
      */
     public void updateAllTabs(String searchKeyWord, List<Item> result) {
     	updateTableTab();
@@ -157,9 +157,9 @@ public class Controller {
     
     /**
      * Called to update the trend tab
-     * @author - kennethleeid
-     * @param - searchKeyWord, String to store the previous searches
-     * @param - result, a list of items to store the scraped results
+     * @author kenneth-id
+     * @param searchKeyWord - String to store the previous searches
+     * @param result - a list of items to store the scraped results
      */
     public void updateTrendTab(String searchKeyWord, List<Item> result) {
     	Trend searchTrend = new Trend (result);
@@ -173,7 +173,7 @@ public class Controller {
     	
     /**
      * Called when the search button is pressed.
-     * @author - vajunaedi, kennethlee-id, hanskrishandi
+     * @author - vajunaedi, kennethlee-id, hskrishandi
      */
     @FXML
     private void actionSearch() {
@@ -183,9 +183,11 @@ public class Controller {
     	comboBoxTrend.setItems(lastFiveSearches);
     	//System.out.println("Begin scraping");
     	result = scraper.scrape(searchKeyWord);
+
     	//System.out.println("Finished scraping");
  //   	Trend searchTrend = new Trend (result);
 //    	if(!lastFiveSearches.contains(searchKeyWord)) {
+ //   	if(!lastFiveSearches.contains(searchKeyWord)) {
 //	    	addToLastFiveResults(result);
 //	    	addToLastFiveTrends(searchTrend);
 //	    	addToLastFiveSearches(searchKeyWord);
@@ -215,6 +217,8 @@ public class Controller {
     	updateConsole(lastFiveResults.get(index));
     }
     
+    
+    
     /**
 	 * Helper method to update the chart in the Trend tab 
 	 * @author kennethid
@@ -224,19 +228,9 @@ public class Controller {
     public void updateTrendChart(Trend searchTrend, String searchKeyWord) {
     	//remove previous linechart
     	areaChartTrend.getData().clear();
-    	XYChart.Series<String, Number> averagePricesSeries = new XYChart.Series<String, Number>();
-    	averagePricesSeries.setName("The average selling price of the " + searchKeyWord);
-    	int numberOfPoints=0;
-    	for(int i=0; i<7;i++) {
-    		if(!(searchTrend.getAveragePricesList().get(i).equals(0.0))) {
-    		Data<String,Number> point =new Data<String, Number>(searchTrend.getDatesString().get(i), 
-    				searchTrend.getAveragePricesList().get(i));
-    		averagePricesSeries.getData().add(point);
-    		numberOfPoints++;
-    		}
-    	}
+    	XYChart.Series<String, Number> averagePricesSeries = addDataPoints(searchTrend,searchKeyWord);
     	areaChartTrend.getData().addAll(averagePricesSeries);
-    	final int numberOfPointsFinal = numberOfPoints;
+    	final int numberOfPointsFinal = averagePricesSeries.getData().size();
     	//adding double click event handler to each point
     	for(int i=0; i<numberOfPointsFinal;i++) {
     		Data<String, Number> currentDataPoint =areaChartTrend.getData().get(0).getData().get(i);
@@ -268,6 +262,26 @@ public class Controller {
     		         }
     		    });
     	}
+    }
+    
+    /**
+	 * Helper method to add data points the chart in the Trend tab 
+	 * @author kenneth-id
+	 * @param searchTrend - Trend object 
+	 * @param searchKeyWord - String of the searched keyword
+	 * @return the Series of data points we will add to the chart 
+	 */    
+    public XYChart.Series<String, Number> addDataPoints(Trend searchTrend, String searchKeyWord) {
+    	XYChart.Series<String, Number> averagePricesSeries = new XYChart.Series<String, Number>();
+    	averagePricesSeries.setName("The average selling price of the " + searchKeyWord);
+    	for(int i=0; i<7;i++) {
+    		if(!(searchTrend.getAveragePricesList().get(i).equals(0.0))) {
+    		Data<String,Number> point =new Data<String, Number>(searchTrend.getDatesString().get(i), 
+    				searchTrend.getAveragePricesList().get(i));
+    		averagePricesSeries.getData().add(point);
+    		}
+    	}
+    	return averagePricesSeries;
     }
     
     /**
@@ -354,7 +368,7 @@ public class Controller {
 	 * Helper method to print on console 
 	 * @author vajunaedi
 	 * @return item's string
-	 * @param the Item to be converted into String
+	 * @param item - the Item to be converted into String
 	 */ 
     public String printItemAttributes(Item item) {
     	String output = "";
@@ -505,20 +519,46 @@ public class Controller {
   
     }
     
+    /**
+	 * Basic Task 1: Summary. 
+	 * This function gets the total count, lowest selling price, average, and latest item from
+	 * the scraped items, and put into the data members of controller
+	 * @author hskrishandi
+	 * @param result - the list of items to check or iterate through
+	 */
+    
     public void getSummaryData(List<Item> result) {
+    	
+    	System.out.println(result.size());
+    	
+    	if(result.size() == 0) {
+    		min = "-";
+        	average = "-";
+        	totalcount = String.valueOf(result.size());
+        	latestUrl = "";
+        	lowUrl = "";
+        	latest = "-";
+        	return;
+    	}
     	
     	int count = 0;
     	int priceSum = 0;
+    	double avg;
     	
     	double lowest = Double.POSITIVE_INFINITY;
     	
-    	latest = LocalDateTime.MIN;
+    	LocalDateTime datelatest = LocalDateTime.MIN;
     	
     	for (Item item : result) {
     		
     		double price = item.getPrice();
     		LocalDateTime  date = item.getPostedDate();
     		String url = item.getUrl();
+    		
+    		if(datelatest.isBefore(date)) {
+    			datelatest = date;
+    			latestUrl = url;	
+    		}
     		
     		if(price == 0) {
     			continue;
@@ -528,30 +568,37 @@ public class Controller {
     			lowest = price;
     			lowUrl = url;
     		}
-
-    		if(latest.isBefore(date)) {
-    			latest = date;
-    			latestUrl = url;	
-    		}
     		
     		priceSum += price;
     		count++;
     	}
     	
-    	double avg = priceSum / count;
+    	if(count == 0) {
+    		avg = 0;
+    		lowest = 0;
+    	} else {
+    		avg = priceSum / count;
+    	}
     	
     	min = String.valueOf(lowest);
     	average = String.valueOf(avg);
     	totalcount = String.valueOf(result.size());
+    	latest = String.valueOf(datelatest.format(DateTimeFormatter.ofPattern("dd MMM yyyy HH:mm")));
     	
     }
+    
+    /** 
+	 * Update the summary tab in the UI using the data members, and set the hyperlinks
+	 * for lowest selling price and latest item
+	 * @author hskrishandi
+	 */
     
     private void setSummaryTab() {
     	
     	labelCount.setText(totalcount);
     	labelPrice.setText(average);
     	labelMin.setText(min);
-    	labelLatest.setText(String.valueOf(latest.format(DateTimeFormatter.ofPattern("dd MMM yyyy HH:mm"))));
+    	labelLatest.setText(latest);
     	
     	final String url1 = lowUrl;
     	
@@ -577,7 +624,17 @@ public class Controller {
     	
     }
     
+    /** 
+	 * Helper function to open browser when clicking hyperlink
+	 * @author hskrishandi
+	 * @param link - the destination link
+	 */
+    
     private void popUpLink(String link) {
+    	
+    	if(link == "")
+    		return;
+    	
     	Desktop d = Desktop.getDesktop();
     	URI u = URI.create(link);
     	
