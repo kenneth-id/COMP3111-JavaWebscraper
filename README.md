@@ -16,7 +16,7 @@
 We limit the scraping to a maximum of 5 pages, and stated the last page in console. 
 
 ### Basic 5
-1. Input refine keyword in the second textbook. 
+1. Input refine keyword in the second textbox.
 2. The refine search can only be done once (i.e. after refining once, the button will be disabled). 
 3. The refine button will be disabled if there is no result from the scraping
 
