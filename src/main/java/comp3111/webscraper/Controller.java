@@ -49,7 +49,9 @@ import java.time.format.DateTimeFormatter;
 /**
  * 
  * @author kevinw
- *
+ * @author kenneth-id
+ * @author vajunaedi
+ * @author hskrishandi
  *
  * Controller class that manage GUI interaction. Please see document about JavaFX for details.
  * 
@@ -173,7 +175,9 @@ public class Controller {
     	
     /**
      * Called when the search button is pressed.
-     * @author - vajunaedi, kennethlee-id, hskrishandi
+     * @author vajunaedi
+     * @author kenneth-id
+     * @author hskrishandi
      */
     @FXML
     private void actionSearch() {
@@ -183,16 +187,7 @@ public class Controller {
     	comboBoxTrend.setItems(lastFiveSearches);
     	//System.out.println("Begin scraping");
     	result = scraper.scrape(searchKeyWord);
-
     	//System.out.println("Finished scraping");
- //   	Trend searchTrend = new Trend (result);
-//    	if(!lastFiveSearches.contains(searchKeyWord)) {
- //   	if(!lastFiveSearches.contains(searchKeyWord)) {
-//	    	addToLastFiveResults(result);
-//	    	addToLastFiveTrends(searchTrend);
-//	    	addToLastFiveSearches(searchKeyWord);
-//    	}
-//   	updateTrendChart(searchTrend,searchKeyWord);
     	
     	updateTrendTab(searchKeyWord, result);
     	updateConsole(result);
@@ -200,7 +195,6 @@ public class Controller {
 
     	beforeRefine = searchKeyWord;
     	refineID.setDisable(false);
-    	//getSummaryData(result);
     }
     
     /**
@@ -267,8 +261,8 @@ public class Controller {
     /**
 	 * Helper method to add data points the chart in the Trend tab 
 	 * @author kenneth-id
-	 * @param searchTrend - Trend object 
-	 * @param searchKeyWord - String of the searched keyword
+	 * @param searchTrend Trend object 
+	 * @param searchKeyWord String of the searched keyword
 	 * @return the Series of data points we will add to the chart 
 	 */    
     public XYChart.Series<String, Number> addDataPoints(Trend searchTrend, String searchKeyWord) {
@@ -294,7 +288,7 @@ public class Controller {
     
     /**
 	 * Helper method to add a String object to the ArrayList lastFiveSearches 
-	 * @author kennethid
+	 * @author kenneth-id
 	 * @param toAdd  String object to be added into the ArrayList 
 	 */
     public void addToLastFiveSearches (String toAdd) {
@@ -309,7 +303,7 @@ public class Controller {
     
     /**
 	 * Helper method to add a List of Items to the ArrayList lastFiveResults 
-	 * @author kennethid
+	 * @author kenneth-id
 	 * @param toAdd  List of Item objects to be added into the ArrayList 
 	 */
     public void addToLastFiveResults (List<Item> toAdd) {
@@ -324,7 +318,7 @@ public class Controller {
     
     /**
 	 * Helper method to add a Trend object to the ArrayList lastFiveTrends 
-	 * @author kennethid
+	 * @author kenneth-id
 	 * @param toAdd  Trend object to be added into the ArrayList 
 	 */
     public void addToLastFiveTrends (Trend toAdd) {
@@ -348,7 +342,7 @@ public class Controller {
     
     /**
 	 * Helper method to get the ArrayList lastFiveTrends from the controller class 
-	 * @author kennethid
+	 * @author kenneth-id
 	 * @return The ArrayList of Trend object, lastFiveTrends from the controller class 
 	 */
     public ArrayList<Trend> getLastFiveTrends(){
@@ -357,7 +351,7 @@ public class Controller {
     
     /**
 	 * Helper method to get the ArrayList of List lastFiveResults from the controller class 
-	 * @author kennethid
+	 * @author kenneth-id
 	 * @return The ArrayList of List filled with Item objects, lastFiveResults from the controller class 
 	 */
     public ArrayList<List<Item>> getLastFiveResults(){
@@ -365,10 +359,10 @@ public class Controller {
     }
    
     /**
-	 * Helper method to print on console 
+	 * Helper method to print an Item object's attributes on console 
 	 * @author vajunaedi
-	 * @return item's string
-	 * @param item - the Item to be converted into String
+	 * @return String of the item's description
+	 * @param item Item object to be converted into String
 	 */ 
     public String printItemAttributes(Item item) {
     	String output = "";
@@ -378,33 +372,35 @@ public class Controller {
     
     /**
 	 * Helper method to print on console 
-	 * @author kenneth-id, vajunaedi
-	 * @param result - the list of items to be printed
+	 * @author kenneth-id
+	 * @author vajunaedi
+	 * @param result the list of items to be printed
 	 */
     public void updateConsole(List<Item> result) {
     	System.out.println("Items from Craiglist and Carousell (Price in USD)");
-    	String output = "";
-    	for (Item item : result) {
-    		output += printItemAttributes(item);
-    	}
+    	String output = iterateResultToPrint(result);
     	textAreaConsole.setText(output);
     }
     
-
-//    /**
-//	 * Additional method to ensure that on first click, the refine button is disabled
-//	 * @author vajunaedi
-//	 */
-//    @FXML
-//    private void mouseClicked() {
-//    	disableRefineIDonEmptyConsole();
-//    }
-//    
+    /**
+	 * Helper method to test the list iteration to print
+	 * @author vajunaedi
+	 * @param result the list of items to be printed
+	 * @return String of the result output
+	 */
+    public String iterateResultToPrint(List<Item> result) {
+    	String output="";
+    	for (Item item : result) {
+    		output += printItemAttributes(item);
+    	}
+    	return output;
+    }
+    
     /**
 	 * Additional method to ensure that on first click, the refine button is disabled
 	 * @author vajunaedi
 	 */
-    private void disableRefineIDonEmptyConsole() {
+    private void disableRefineIDonNullResults() {
     	if(result == null) {
     		refineID.setDisable(true);
     		return;
@@ -412,13 +408,13 @@ public class Controller {
     }
     
     /**
-	 * Helper function for findTitleWithRefineKeyword; as an iterator iterates through the list,
+	 * Helper function for refine search, as an iterator iterates through the list,
 	 * it checks if a string (i.e. the item's title) contains a substring (the refine search keyword),
 	 * and it removes the item which does not contain said keyword/substring
 	 * @author vajunaedi
-	 * @param result - the list of items to check or iterate through
-	 * @param text - the keyword/substring checked 
-	 * @return A refined list of item, representing those whose title contains the specified keyword/substring
+	 * @param result the list of Item objects to check or iterate through
+	 * @param text the keyword/substring checked 
+	 * @return A List of Items refined, representing those whose title contains the specified keyword/substring
 	 */
     public List<Item> findTitleWithRefineKeyword(List<Item> result, String text) {
 		Iterator<Item> iter = result.listIterator();
@@ -441,19 +437,13 @@ public class Controller {
 	 */
     @FXML
     public void refineSearch() {
-//    	if(textAreaConsole.getText().isEmpty()) {
-//    		refineID.setDisable(true);
-//    		return;
-//    	}
-    	disableRefineIDonEmptyConsole();
-    	//result = scraper.scrape(beforeRefine);
+    	disableRefineIDonNullResults();
     	// Update the result lists 
     	result = findTitleWithRefineKeyword(result, textFieldKeywordRefine.getText());
     	// Console is updated with the refined results
     	updateConsole(result);
     	// Update all other tabs to the right of console
     	updateAllTabs(beforeRefine + " " + textFieldKeywordRefine.getText(), result);
-    	//updateTrendTab(beforeRefine, result);
     	refineID.setDisable(true);
     }
 
@@ -464,28 +454,39 @@ public class Controller {
 	private static class HyperlinkCell implements  Callback<TableColumn<Item, String>, TableCell<Item, String>> {
 		
 	    /**
-		 * This function help define the URL's table cell to be defined as Hyperlink, although it is initially stored as String.
+		 * This function helps define the URL's table cell to be defined as Hyperlink, although it is initially stored as String.
 		 * In addition, it is handling each cell to be opened in a new browser.
 		 * @author vajunaedi
-		 * @param arg - calling the TableColumn URL
+		 * @param arg calling the TableColumn URL
 		 * @return represents the TableColumn that has been set into Hyperlink 
 		 */
 	    @Override
 	    public TableCell<Item, String> call(TableColumn<Item, String> arg) {
 	        TableCell<Item, String> cell = new TableCell<Item, String>() {
+	    	    /**
+	    		 * Cast item to Hyperlink to handle its data type in table-setting
+	    		 * @author vajunaedi
+	    		 * @param item String object that represents the URL
+	    		 * @param empty Boolean object
+	    		 */
 	            @Override
 	            protected void updateItem(String item, boolean empty) {
 	            	Hyperlink item_casted = new Hyperlink(item);
 	                setGraphic(item_casted);
 	                item_casted.setOnAction(new EventHandler<ActionEvent>() {
+	    	    	    /**
+	    	    		 * Handler for opening the URL in a browser
+	    	    		 * @author vajunaedi
+	    	    		 * @param arg0 on action, this func will be called
+	    	    		 */
 						@Override
 						public void handle(ActionEvent arg0) {
 							try {
 								Desktop.getDesktop().browse(new URI(item));
-							} catch(IOException e1) {
-								e1.printStackTrace();
-							} catch(URISyntaxException e1) {
-								e1.printStackTrace();
+							} catch(IOException e) {
+								e.printStackTrace();
+							} catch(URISyntaxException e) {
+								e.printStackTrace();
 							}
 						}
 	                	
@@ -498,7 +499,7 @@ public class Controller {
 
     /**
 	 * Basic Task 4: Table. 
-	 * This function stored the scraped items content into a table. 
+	 * This function stored the scraped items' attribute (fresh or refined), which are its title, price, url, and posted date into a table. 
 	 * @author vajunaedi
 	 */
     @FXML

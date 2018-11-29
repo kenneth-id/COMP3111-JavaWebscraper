@@ -40,7 +40,8 @@ public class WebScraper {
 	 * Main method of this class: scrape web content from Craiglist and Carousell
 	 * Scrape multiple pages for Craiglist, limited to 10 page 
 	 * 
-	 * @author - kenneth-id, hskrishandi
+	 * @author kenneth-id
+	 * @author hskrishandi
 	 * @param keyword - the keyword you want to search
 	 * @return A list of Item that has found. A zero size list is return if nothing is found. Null if any exception (e.g. no connectivity)
 	 */
