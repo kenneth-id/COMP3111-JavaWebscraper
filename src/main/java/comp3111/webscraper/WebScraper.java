@@ -17,7 +17,7 @@ import java.util.Vector;
 
 /**
  * Webscraper class, use it to scrape websites 
- * @author kenneth-id
+ * @author kennethid
  */
 public class WebScraper {
 
@@ -40,7 +40,8 @@ public class WebScraper {
 	 * Main method of this class: scrape web content from Craiglist and Carousell
 	 * Scrape multiple pages for Craiglist, limited to 10 page 
 	 * 
-	 * @author - kenneth-id, hskrishandi
+	 * @author kenneth-id
+	 * @author hskrishandi
 	 * @param keyword - the keyword you want to search
 	 * @return A list of Item that has found. A zero size list is return if nothing is found. Null if any exception (e.g. no connectivity)
 	 */
@@ -191,14 +192,14 @@ public class WebScraper {
 		return null;
 	}
 	
-	
-	/**
-	 * helper method of this class, use it for debugging purposes. 
-	 * @author kenneth-id
-	 * @param webPage - a HTMLPage you get from the .getPage function
-	 * @return .HTML file in the directory you specify. Change it because I am using my own directory there
-	 * @throws IOException when there is an error
-	 */
+//	
+//	/**
+//	 * helper method of this class, use it for debugging purposes. 
+//	 * @author kenneth id
+//	 * @param webPage a HTMLPage you get from the .getPage function
+//	 * @return .HTML file in the directory you specify. Change it because I am using my own directory there
+//	 * @throws IOException when there is an error
+//	 */
 //	private void generateHTMLPage(HtmlPage webPage) throws IOException {
 //		WebResponse response = webPage.getWebResponse();
 //		String content = response.getContentAsString();

@@ -11,13 +11,6 @@ import java.util.List;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-//import org.testfx.framework.junit.ApplicationTest;
-//
-//import javafx.fxml.FXMLLoader;
-//import javafx.scene.Scene;
-//import javafx.scene.control.Button;
-//import javafx.scene.control.TextField;
-//import javafx.scene.control.TextArea;
 
 import com.gargoylesoftware.htmlunit.javascript.host.Console;
 
@@ -132,6 +125,27 @@ public class ControllerTest {
 		assertEquals(itemTest.isEmpty(), true);
 	}
 	
+	
+	@Test
+	public void checkIterateToPrint() throws Exception {
+		Item item1 = createDummyItem("Craigslist", 0.0, "Dummy item for test", LocalDateTime.now());
+		Item item2 = createDummyItem("Craigslist", 0.0, "Dummy item for test", LocalDateTime.now());
+
+		List<Item> itemTest = new ArrayList<Item>();
+		itemTest.add(item1);
+		itemTest.add(item2);
+
+		String output = "";
+		String output2 = "";
+		for(Item i : itemTest) {
+			output += i.getTitle() + "\t" + i.getPrice() +	 "\t" + i.getOrigin() + "\t" +i.getUrl() + "\n";
+		}
+		
+		output2 = c.iterateResultToPrint(itemTest);
+				
+		assertEquals(output, output2);
+	}
+	
 	@Test
 	public void testSummary() {
 		
@@ -230,18 +244,4 @@ public class ControllerTest {
 		c =null;
 	}
 
-	
-//	@Test
-//	public void checkHelper_checkTitle() {
-//		Item item = createDummyItem("Craigslist", 0.0, "Dummy item for test", LocalDateTime.now());
-//	
-//		List<Item> itemTest = null;
-//		itemTest.add(item);
-//		
-//		Controller c = new Controller();
-//		c.checkIfTitleIsTheSameAsText(itemTest, "Dummy");
-//		
-//		assertEquals(itemTest.isEmpty(), false);
-//	}
-//	
 }
