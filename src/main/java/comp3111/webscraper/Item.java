@@ -2,7 +2,10 @@ package comp3111.webscraper;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 
-
+/**
+ * Item class to contain each element of the scraped website
+ * @author kennethid
+ */
 public class Item  {
 	private String title ; 
 	private Double price ;
