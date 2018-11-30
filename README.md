@@ -15,3 +15,4 @@
 5. The refine search can only be done once (i.e. after refining once, the button will be disabled). 
 6. The refine button will be disabled if there is no result from the scraping
 7. FXML methods are not tested
+8. Exchange rate of USD to HKD is assumed to be 1 to 7.8
