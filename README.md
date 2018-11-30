@@ -8,7 +8,7 @@
 | Hans Krishandi | Basic 1 | Basic 3 |
 
 ## Assumptions
-1. Carousell (https://hk.carousell.com/)
+1. Additional site tested is Carousell (https://hk.carousell.com/)
 2. On Dates for Carousell: they do not have an exact posting date, only indications such as "two months ago", "a year ago", "4 days ago", etc., so e.g. if it indicates "two months ago" and today's date is 29 November 2018, we will store the date at 29 September 2018.  
 3. We limit the scraping to a maximum of 5 pages, and stated the last page in console. 
 4. Input refine keyword in the second textbox.
