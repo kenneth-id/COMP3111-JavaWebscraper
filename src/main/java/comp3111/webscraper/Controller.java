@@ -169,13 +169,9 @@ public class Controller {
     	
     /**
      * Called when the search button is pressed.
-<<<<<<< HEAD
-     * @author - vajunaedi, kennethlee-id, hskrishandi
-=======
      * @author vajunaedi
      * @author kenneth-id
      * @author hskrishandi
->>>>>>> branch 'master' of https://github.com/kenneth-id/COMP3111-TKOXP.git
      */
     @FXML
     private void actionSearch() {
@@ -198,6 +194,7 @@ public class Controller {
     /**
 	 * Called when the Value property of the combobox in the Trend tab is changed.
 	 * @author kennethid
+	 * @param event ActionEvent object FXML
 	 */
     @FXML
     void trendComboBoxAction(ActionEvent event) {
