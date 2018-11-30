@@ -206,8 +206,6 @@ public class Controller {
     	updateConsole(lastFiveResults.get(index));
     }
     
-    
-    
     /**
 	 * Helper method to update the chart in the Trend tab 
 	 * @author kennethid
