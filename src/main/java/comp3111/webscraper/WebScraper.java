@@ -118,7 +118,7 @@ public class WebScraper {
 			HtmlPage carousellPage = client.getPage(searchCarousellUrl);
 			client.waitForBackgroundJavaScriptStartingBefore(50000);
 		    
-			List<?> carousellItems = (List<?>) carousellPage.getByXPath("//*[@id=\"root\"]/div/div[1]/div[1]/div[2]/div[2]/div[4]/div[1]/div");
+			List<?> carousellItems = (List<?>) carousellPage.getByXPath("//*[@id=\"root\"]/div/div[1]/div/div[2]/div[2]/div[5]/div[1]/div");
 			System.out.println("size of carousellItems list= " + carousellItems.size());
 			for (int i = 0; i < carousellItems.size(); i++) {
 				HtmlElement htmlItem = (HtmlElement) carousellItems.get(i);
